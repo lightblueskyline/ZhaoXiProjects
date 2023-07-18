@@ -56,3 +56,51 @@ CREATE DATABASE ZhaoXiExercise001;
 -- 授予权限
 GRANT ALL PRIVILEGES ON ZhaoXiExercise001.* TO 'ZhaoXiProjects'@'%';
 ```
+
+### 使用 JWT 生成 Token
+
+安装 NuGet 包： Microsoft.AspNetCore.Authentication.JwtBearer
+
+```json
+// C:\Z_Documents\ZhaoXiProjects\Exercise001\Zhaoxi.Shopping.Backend\ExeWebApi\appsettings.json
+"JWTTokenOptions": {
+  "Audience": "http://localhost:5148",
+  "Issuer": "http://localhost:5148",
+  "SecurityKey": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDI2a2EJ7m872v0afyoSDJT2o1+SitIeJSWtLJU8/Wz2m7gStexajkeD+Lka6DSTy8gt9UwfgVQo6uKjVLG5Ex7PiGOODVqAEghBuS7JzIYU5RvI543nNDAPfnJsas96mSA7L/mD7RTE2drj6hf3oZjJpMPZUQI/B1Qjb5H3K3PNwIDAQAB"
+}
+```
+
+### JSON 格式化
+
+安装 NuGet 包： Microsoft.AspNetCore.Mvc.NewtonsoftJson
+
+```csharp
+// C:\Z_Documents\ZhaoXiProjects\Exercise001\Zhaoxi.Shopping.Backend\ExeWebApi\Program.cs
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    // 忽略循环引用
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    // 统一设置 API 日期格式
+    options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+    // 设置 JSON 返回格式同 Model 一致 (默认 JSON 中的首字母为小写，这里修改为同后端 Model 一致)
+    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+});
+```
+
+### Swagger 配置
+
+1. Authorization
+2. SchemaFilter
+
+### 文件上传服务设计
+
+1. 多种上传场景分析
+2. 策略 + 工厂模式的讲解和应用
+
+### 本地上传功能实现
+
+### 七牛云上传功能实现
+
+注册云账号： `https://portal.qiniu.com/signup`  
+个人中心获取密钥信息  
+安装 SDK 编写上传逻辑

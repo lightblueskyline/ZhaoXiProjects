@@ -121,7 +121,7 @@ namespace ExeWebApi.Controllers
             Menu menu6 = new Menu()
             {
                 ID = Guid.NewGuid().ToString(),
-                Name = "角色列表",
+                Name = "用户列表",
                 Index = "/user",
                 FilePath = "user.vue",
                 ParentID = menu5ID,
@@ -132,7 +132,7 @@ namespace ExeWebApi.Controllers
                 CreateDate = DateTime.Now,
                 CreateUserID = userID,
             };
-            await _db.Insertable(menu6).ExecuteReturnEntityAsync();
+            await _db.Insertable(menu6).ExecuteCommandIdentityIntoEntityAsync();
             #endregion
 
             return true;

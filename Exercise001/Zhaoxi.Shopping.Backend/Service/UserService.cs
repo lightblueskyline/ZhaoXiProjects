@@ -19,7 +19,7 @@ namespace Service
         {
             var user = await _db.Queryable<Users>()
                 .Where(x => x.Name == req.UserName && x.Password == req.PassWord)
-                .Select(x => new UserRes() { }, true) // true 表示自动映射
+                .Select(x => new UserRes() { }, true) // true 表示自动映射，实体转换为 DTO
                 .FirstAsync();
             return user;
         }
