@@ -119,8 +119,33 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 
 ### 使用 Vite 构建 Vue3 + TypeScript 项目
 
-创建项目命令： `pnpm create vite@latest web`  
+`npm install -g npm@9.8.1`  
+`npm install -g pnpm`  
+创建项目命令(文件名小写)： `pnpm create vite@latest web`  
 进入选择界面之后选择 Vue 回车后再选择 TypeScript 最后回车继续  
 cd web 进入目录  
 `pnpm install` 初始化项目，安装依赖包  
-`pnpm run dev` 启动项目
+`pnpm run dev` `pnpm dev` 启动项目
+
+### 修改项目配置
+
+```ts
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [vue()],
+  server: {
+    open: true, // 启动项目后，自动打开浏览器
+    host: "127.0.0.1", // 设置主机
+    // port: 5001, // 设置端口
+  }
+})
+```
+
+### 安装和配置路由
+
+1. 安装命令： `pnpm install vue-router@4`
+2. 新建相关页面
+3. src 下新增 router 文件夹与其中建立 index.ts 路由配置文件
+4. 编写路由配置到 index.ts
+5. main.ts 中引入路由
+6. App.vue 中使用 router-view 标签显示路由页面
