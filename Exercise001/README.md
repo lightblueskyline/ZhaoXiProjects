@@ -104,3 +104,23 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 注册云账号： `https://portal.qiniu.com/signup`  
 个人中心获取密钥信息  
 安装 SDK 编写上传逻辑
+
+### 个人信息编辑接口
+
+### 菜单模块 CRUD 接口
+
+### 角色模块 CRUD 接口
+
+### 用户模块 CRUD 接口
+
+### Controller 层补充
+
+## 前端项目
+
+### 使用 Vite 构建 Vue3 + TypeScript 项目
+
+创建项目命令： `pnpm create vite@latest web`  
+进入选择界面之后选择 Vue 回车后再选择 TypeScript 最后回车继续  
+cd web 进入目录  
+`pnpm install` 初始化项目，安装依赖包  
+`pnpm run dev` 启动项目

@@ -17,7 +17,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
-// Swagger 配置
+#region Swagger 配置
 builder.Services.AddSwaggerGen(options =>
 {
     // 设置标题和版本
@@ -49,6 +49,7 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+#endregion
 
 #region Autofac 替换内置 IOC
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
