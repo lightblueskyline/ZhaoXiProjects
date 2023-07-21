@@ -1,0 +1,17 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* 统一设置按钮的左边距，使之和同族按钮以及左侧输入栏保持距离 */
+.el-button {
+    margin-left: 12px;
+}
+
+.el-row:last-child {
+    margin-bottom: 0;
+}
+
+.middle {
+    vertical-align: middle;
+}

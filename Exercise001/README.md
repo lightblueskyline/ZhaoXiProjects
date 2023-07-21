@@ -149,3 +149,60 @@ export default defineConfig({
 4. 编写路由配置到 index.ts
 5. main.ts 中引入路由
 6. App.vue 中使用 router-view 标签显示路由页面
+
+'admin' 文件夹放置动态路由相关页面  
+'index' 文件夹放置非动态路由相关，所有人可见的页面
+
+### 安装和配置 Element Plus
+
+安装： `pnpm install element-plus`  
+导入方式： 全局导入、单独导入、自动导入  
+图标需要单独安装： `pnpm install @element-plus/icons-vue`
+
+### 安装 Sass 添加和引用全局样式
+
+安装： `pnpm install sass`  
+assets 文件夹下新建 global.scss 文件，添加全局 CSS 并到 main.ts 中引入
+
+### 设计并完成登录页静态效果
+
+### 登录页表单验证逻辑
+
+模型绑定，模板引用，设置表单验证规则  
+:model="form" ref="loginForm" :rules="rules"  
+导入类型：  
+`import {FormInstance, FormRules} from 'element-plus'`  
+`const rules = reactive<FormRules>({})`  
+`const onSubmit = async (loginForm: FormInstance | undefined) => {}`
+
+### 后台界面设计以及嵌套路由
+
+### 图标组件的封装
+
+图标的多种使用方式：
+
+1. 通过标签直接使用
+2. 通过 Button 按钮+图标组合使用
+3. 通过 component 标签实现自定义
+
+### 左侧菜单模块的实现
+
+Element-Plus 菜单组件的应用  
+菜单组件的封装，递归调用实现无限层级
+
+### 全局状态管理 pinia 的安装
+
+安装： `pnpm install pinia`  
+优点： 跨组件/页面共享状态、热模块更换、服务端渲染...  
+持久化： `pnpm install pinia-plugin-persist`
+
+### Header 组件的封装
+
+面包屑组件  
+下拉菜单 (昵称、退出)  
+Tags 标签导航
+
+### 菜单折叠效果的实现
+
+定义全局变量  
+处理切换逻辑
