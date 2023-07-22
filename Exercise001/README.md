@@ -206,3 +206,50 @@ Tags 标签导航
 
 定义全局变量  
 处理切换逻辑
+
+### Tags 标签导航功能实现
+
+从全局状态中读取 Tags  
+设置 Tags `handleSelect(index)`  
+点击 Tags `clickTag(index)`
+
+### 工作台界面设计，以及逻辑交互
+
+日历组件  
+设置代办项  
+多语言设置，以及声明文件问题
+
+### Element-Plus 国际化
+
+### 个人信息界面设计
+
+`pnpm install jwt-decode`
+
+### 菜单列表静态页
+
+### 角色列表静态页
+
+### 用户列表静态页
+
+### Axios 的介绍和安装
+
+Axios 是一个基于 promise 的网络请求库，可用于浏览器和 Node.js  
+Axios 使用简单，包尺寸小且提供了易于扩展的接口  
+安装命令： `pnpm install axios`
+
+```ts
+import axios from 'axios';
+
+axios.get('/users')
+    .then(result => {
+      console.log(result.data);
+    });
+```
+
+### Axios 拦截器的使用
+
+创建一个拦截器对象 `const instance = axios.create({});`  
+请求之前做拦截 `instance.interceptors.request.use()`  
+得到响应结果之后做拦截 `instance.interceptors.resonse.use()`
+
+### HTTP 请求的封装
