@@ -37,8 +37,6 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-pagination style="margin-top: 10px;" background layout="prev, pager, next"
-                    :total="1000"></el-pagination>
             </el-col>
         </el-row>
     </el-card>
@@ -47,6 +45,7 @@
 <script setup lang="ts">
 import { Ref, ref, onMounted } from 'vue';
 import MenuModel from '../../../class/MenuModel';
+import { GetMenus, DeleteMenu } from "../../../http/index";
 
 const searchVal = ref("");
 let params = {
@@ -58,6 +57,7 @@ let params = {
 const load = async () => {
     // 查询数据
     params.Name = searchVal.value;
+    tableData.value = await GetMenus(params) as any as Array<MenuModel>;
 };
 onMounted(async () => {
     await load();
@@ -70,8 +70,9 @@ const tableData: Ref<Array<MenuModel>> = ref<Array<MenuModel>>([]);
 const handleEdit = (index: number, row: MenuModel) => {
     console.log(index, row);
 };
-const handleDelete = (index: number, row: MenuModel) => {
-    console.log(index, row);
+const handleDelete = await (index: number, row: MenuModel) => {
+    await DeleteMenu(row.ID);
+    await load();
 };
 </script>
 

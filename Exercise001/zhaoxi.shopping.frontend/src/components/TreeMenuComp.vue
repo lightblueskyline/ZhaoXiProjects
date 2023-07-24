@@ -15,9 +15,11 @@
         </el-sub-menu>
     </template>
 </template>
+
 <script setup lang="ts">
 import TreeModel from '../class/TreeModel';
 import IconComp from './IconComp.vue';
+
 defineProps({
     list: Array<TreeModel>
 });

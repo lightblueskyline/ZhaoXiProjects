@@ -19,7 +19,7 @@
                             <span>个人信息</span>
                         </el-menu-item>
                     </el-sub-menu>
-                    <el-menu-item index="/menu">
+                    <!-- <el-menu-item index="/menu">
                         <IconComp icon="Menu"></IconComp>
                         <span>菜单列表</span>
                     </el-menu-item>
@@ -30,9 +30,9 @@
                     <el-menu-item index="/user">
                         <IconComp icon="UserFilled"></IconComp>
                         <span>用户列表</span>
-                    </el-menu-item>
+                    </el-menu-item> -->
                     <!-- 动态菜单 -->
-                    <!-- <TreeMenuComp :list="treeList"></TreeMenuComp> -->
+                    <TreeMenuComp :list="treeList"></TreeMenuComp>
                 </el-menu>
             </el-aside>
             <el-container>
@@ -49,8 +49,8 @@ import { computed } from "vue";
 import userStore from "../../store/index";
 import HeaderComp from "../../components/HeaderComp.vue";
 import IconComp from "../../components/IconComp.vue";
-// import TreeMenuComp from "../../components/TreeMenuComp.vue"; // 导入菜单组件
+import TreeMenuComp from "../../components/TreeMenuComp.vue"; // 导入菜单组件
 
-// const treeList = computed(() => userStore().UserMenus);
+const treeList = computed(() => userStore().UserMenus);
 const isCollapse = computed(() => userStore().IsCollapse);
 </script>

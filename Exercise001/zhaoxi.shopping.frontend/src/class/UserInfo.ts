@@ -4,5 +4,5 @@ export default interface UserInfo {
     Name: string
     Image: string
     UserType: number
-    Expire: number
+    exp: number
 }
