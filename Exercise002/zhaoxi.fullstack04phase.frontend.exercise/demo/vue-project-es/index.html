@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>通过 ES 模块构建版本</title>
+</head>
+
+<body>
+    <div id="app">{{message}}</div>
+</body>
+
+<script type="module">
+    import { createApp } from "https://unpkg.com/vue@3/dist/vue.global.js"
+
+    // const { createApp } = Vue
+    createApp({
+        data() {
+            return {
+                message: "Hello Vue! (ES)"
+            }
+        }
+    }).mount("#app")
+</script>
+
+</html>
