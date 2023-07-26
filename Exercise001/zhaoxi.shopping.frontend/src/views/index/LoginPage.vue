@@ -55,9 +55,10 @@ const onSubmit = async (loginForm: FormInstance | undefined) => {
             // 请求登录接口
             let token: string = await GetToken(form) as any as string;
             if (token != null) {
-                ElMessage.success("验证成功！");
+                ElMessage.success("登录成功！");
+                // 状态管理
                 store().$patch((state) => {
-                    state.Token = token;
+                    state.Token = token
                     state.RefreshTokenCount = 0 // 每次重新登录之后重置无感率先你 Token 次数
                 });
                 router.push({
@@ -65,7 +66,7 @@ const onSubmit = async (loginForm: FormInstance | undefined) => {
                 });
             }
         } else {
-            ElMessage.error("验证失败！");
+            ElMessage.error("登录失败！");
             console.log(fields); // 打印验证失败列
         }
     });

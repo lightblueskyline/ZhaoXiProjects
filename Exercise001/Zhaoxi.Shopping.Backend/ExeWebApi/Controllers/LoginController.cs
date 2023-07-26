@@ -40,5 +40,17 @@ namespace ExeWebApi.Controllers
                 return ResultHelper.Error("输入参数错误！");
             }
         }
+
+        [HttpGet]
+        public async Task<ApiResult> RefreshToken(string userID)
+        {
+            UserRes user = await _userService.Get(userID);
+            if (user == null)
+            {
+                return ResultHelper.Error("登录失败！账号不存在，请检查用户名和密码！");
+            }
+            _logger.LogInformation("登录成功！");
+            return ResultHelper.Success(await _customJWTService.GetToken(user));
+        }
     }
 }

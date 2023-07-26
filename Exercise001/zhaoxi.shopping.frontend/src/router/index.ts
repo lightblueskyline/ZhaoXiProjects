@@ -61,12 +61,13 @@ router.beforeEach(async (to, from, next) => {
     console.log(from);
     // 判断是否存在 Token 不存在跳转至登录页
     if (store().Token == "" || !store().Token) {
+        // 跳转至登录页
         if (to.path != "/login" && to.path != "/") {
             next("/login");
         }
     } else {
         // 已经登录，存在 Token
-        // 判断有效期，并且避免无线重定向
+        // 判断有效期，并且避免无限重定向
         if (!Valid(FormatToken(store().Token)?.exp as number) && to.path != "/login") {
             ElMessage.warning("登录已过有效期，请重新登录！");
             next("/login");

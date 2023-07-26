@@ -39,8 +39,8 @@ namespace Service
                     issuer: _JWTTokenOptions.Issuer,
                     audience: _JWTTokenOptions.Audience,
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(6),
-                    notBefore: null,
+                    expires: DateTime.Now.AddMinutes(3),
+                    // notBefore: null,
                     signingCredentials: credentials);
                 string res = new JwtSecurityTokenHandler().WriteToken(token);
                 return res;

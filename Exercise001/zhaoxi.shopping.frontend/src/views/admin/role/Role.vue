@@ -41,40 +41,94 @@
             </el-col>
         </el-row>
     </el-card>
+    <AddRoleVue :isShow="isShow" :info="info" @closeAdd="closeAddRole" @success="successAddRow"></AddRoleVue>
+    <SettingRoleVue :isShow="isShowSetting" :roleID="roleID" @closeSettingRole="closeSettingRole"
+        @successSettingRole="successSettingRole"></SettingRoleVue>
 </template>
 
 <script setup lang="ts">
 import { Ref, ref, onMounted } from 'vue';
 import RoleModel from '../../../class/RoleModel';
+import { DeleteRole, GetRoles } from "../../../http/index";
+import AddRoleVue from './AddRole.vue';
+import SettingRoleVue from './SettingRole.vue';
+import { ElMessage, ElTable } from "element-plus"
 
+const tableData: Ref<Array<RoleModel>> = ref<Array<RoleModel>>([]);
+const total: Ref<number> = ref<number>(1000);
 const searchVal = ref("");
-let params = {
+const params = ref({
     Name: "",
-    Index: "",
-    FilePath: "",
-    Description: ""
-};
+    Description: "",
+    PageIndex: 1,
+    PageSize: 10
+});
 const load = async () => {
     // 查询数据
-    params.Name = searchVal.value;
+    let res = await GetRoles(params.value) as any;
+    tableData.value = res.Data;
+    total.value = res.total;
 };
 onMounted(async () => {
     await load();
 });
 // 查询
-const Search = () => { };
+const Search = async () => {
+    await load();
+};
+// 新增、修改、删除逻辑 Start
+const isShow = ref(false);
 // 新增
-const AddMenu = () => { };
-// 分配菜单
-const AssignMenu = () => { };
-const tableData: Ref<Array<RoleModel>> = ref<Array<RoleModel>>([]);
-const total: Ref<number> = ref<number>(1000);
+const AddMenu = () => {
+    isShow.value = true;
+};
+const info: Ref<RoleModel> = ref<RoleModel>(new RoleModel());
+const closeAddRole = () => {
+    isShow.value = false;
+    info.value = new RoleModel();
+};
 const handleEdit = (index: number, row: RoleModel) => {
     console.log(index, row);
+    info.value = row;
+    isShow.value = true;
 };
-const handleDelete = (index: number, row: RoleModel) => {
+const successAddRow = async (message: string) => {
+    isShow.value = false;
+    info.value = new RoleModel();
+    ElMessage.success(message);
+    await load();
+};
+const handleDelete = async (index: number, row: RoleModel) => {
     console.log(index, row);
+    await DeleteRole(row.ID);
+    await load();
 };
+// 新增、修改、删除逻辑 End
+
+// 分配菜单逻辑 Start
+const tempTB = ref<InstanceType<typeof ElTable>>();
+const isShowSetting = ref(false);
+const roleID = ref("");
+const AssignMenu = () => {
+    // 判断是否选中角色
+    // 应该只支持单个设置，因为点开界面时存在反选逻辑，如果选择的多个角色它们的菜单不一致，则无法反选
+    let tempRows = tempTB.value?.getSelectionRows();
+    if (tempRows.length == 1) {
+        roleID.value = tempTB.value?.getSelectionRows().map((item: RoleModel) => item.ID).join(",");
+        isShowSetting.value = true
+    } else if (tempRows.length > 1) {
+        ElMessage.warning("清单个选择！");
+    } else {
+        ElMessage.warning("请选择需要分配菜单的角色！");
+    }
+};
+const closeSettingRole = () => {
+    isShowSetting.value = false;
+};
+const successSettingRole = async () => {
+    isShowSetting.value = false;
+};
+// 分配菜单逻辑 End
 </script>
 
 <style scoped lang="scss"></style>

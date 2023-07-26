@@ -2,6 +2,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ExeWebApi.Config;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Model.Other;
@@ -89,22 +90,29 @@ builder.Services.Configure<JWTTokenOptions>(builder.Configuration.GetSection("JW
 {
     JWTTokenOptions tokenOptions = new JWTTokenOptions();
     builder.Configuration.Bind("JWTTokenOptions", tokenOptions);
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme) // Scheme
-        .AddJwtBearer(options => // 配置鉴权逻辑
+    builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    }).AddJwtBearer(options =>
+    {
+        // 配置鉴权逻辑
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
         {
-            options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-            {
-                // JWT 有一些默认的属性，鉴权时就可以筛选了
-                ValidateIssuer = true, // 是否验证 Issuer
-                ValidateAudience = true, // 是否验证 Audience
-                ValidateLifetime = true, // 是否验证失效时间
-                ValidateIssuerSigningKey = true, // 是否验证 SecurityKey
-                ValidAudience = tokenOptions.Audience,
-                ClockSkew = TimeSpan.FromSeconds(0), // 设置 Token 过期多久之后失效 (若此项无设置，默认过期 300 秒内仍旧有效)
-                ValidIssuer = tokenOptions.Issuer, // Issuer 这两项和前面签发的 JWT 的设置一致
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.SecurityKey))
-            };
-        });
+            // JWT 有一些默认的属性，鉴权时就可以筛选了
+            ValidateIssuer = true, // 是否验证 Issuer
+            ValidateAudience = true, // 是否验证 Audience
+            ValidAudience = tokenOptions.Audience,
+            ValidIssuer = tokenOptions.Issuer, // Issuer 这两项和前面签发的 JWT 的设置一致
+            // ValidateLifetime = true, // 是否验证失效时间
+            // ValidateIssuerSigningKey = true, // 是否验证 SecurityKey
+            ClockSkew = TimeSpan.FromSeconds(0), // 设置 Token 过期多久之后失效 (若此项无设置，默认过期 300 秒内仍旧有效)
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenOptions.SecurityKey))
+        };
+    });
 }
 #endregion
 
@@ -129,12 +137,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// 开启静态文件服务
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(AppContext.BaseDirectory, "wwwroot")),
+    RequestPath = "/static"
+});
+
 //app.UseCors(builder =>
 //{
 //    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
 //});
 app.UseCors("_MyAllowSpecificOrigins");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

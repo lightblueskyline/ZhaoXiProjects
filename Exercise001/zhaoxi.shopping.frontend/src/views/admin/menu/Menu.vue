@@ -40,13 +40,18 @@
             </el-col>
         </el-row>
     </el-card>
+    <AddMenuVue :isShow="isShow" :info="info" @closeAdd="closeAdd" @success="success"></AddMenuVue>
 </template>
 
 <script setup lang="ts">
 import { Ref, ref, onMounted } from 'vue';
 import MenuModel from '../../../class/MenuModel';
 import { GetMenus, DeleteMenu } from "../../../http/index";
+import AddMenuVue from './AddMenu.vue';
+import { ElMessage } from 'element-plus';
+import { SettingUserRouter } from '../../../tools/index';
 
+const tableData: Ref<Array<MenuModel>> = ref<Array<MenuModel>>([]);
 const searchVal = ref("");
 let params = {
     Name: "",
@@ -64,16 +69,37 @@ onMounted(async () => {
 });
 // 查询
 const Search = () => { };
+
+// 新增、修改、删除逻辑 Start
+const isShow = ref(false);
 // 新增
-const AddMenu = () => { };
-const tableData: Ref<Array<MenuModel>> = ref<Array<MenuModel>>([]);
+const AddMenu = () => {
+    isShow.value = true;
+};
+const info: Ref<MenuModel> = ref<MenuModel>(new MenuModel());
+const closeAdd = () => {
+    isShow.value = false;
+    info.value = new MenuModel();
+};
 const handleEdit = (index: number, row: MenuModel) => {
     console.log(index, row);
+    info.value = row;
+    isShow.value = true;
 };
-const handleDelete = await (index: number, row: MenuModel) => {
+const success = async (message: string) => {
+    isShow.value = false;
+    info.value = new MenuModel();
+    ElMessage.success(message);
+    await load(); // 重载数据
+    // 重载路由
+    await SettingUserRouter();
+};
+const handleDelete = async (index: number, row: MenuModel) => {
+    console.log(index, row);
     await DeleteMenu(row.ID);
     await load();
 };
+// 新增、修改、删除逻辑 End
 </script>
 
 <style scoped lang="scss"></style>

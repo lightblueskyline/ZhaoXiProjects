@@ -3,7 +3,8 @@
         <el-container>
             <el-aside style="width: inherit;">
                 <el-menu active-text-color="#ffd04b" background-color="#545c64" class="el-menu-vertical-demo" router
-                    :collapse="isCollapse" :unique-opened="true" default-active="2" text-color="#fff">
+                    :collapse="isCollapse" :unique-opened="true" default-active="2" text-color="#fff"
+                    style="height: 100vh;background-color: blanchedalmond;">
                     <!-- 静态菜单 -->
                     <el-sub-menu index="/desktop">
                         <template #title>
@@ -44,6 +45,7 @@
         </el-container>
     </div>
 </template>
+
 <script setup lang="ts">
 import { computed } from "vue";
 import userStore from "../../store/index";
@@ -54,3 +56,5 @@ import TreeMenuComp from "../../components/TreeMenuComp.vue"; // 导入菜单组
 const treeList = computed(() => userStore().UserMenus);
 const isCollapse = computed(() => userStore().IsCollapse);
 </script>
+
+<style scoped lang="scss"></style>

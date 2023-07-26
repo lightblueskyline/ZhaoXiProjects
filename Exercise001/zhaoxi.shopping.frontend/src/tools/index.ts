@@ -100,12 +100,13 @@ export const SettingUserRouter = async () => {
         Name: "",
         Index: "",
         FilePath: "",
-        ParentID: "",
         Description: ""
     };
     // 递归菜单路由
     const treeMenu: Array<TreeModel> = (await GetMenus(temp1)) as any as Array<TreeModel>;
-    treeMenu.forEach(item => {
+    // 递归路由，将 List 转换为 Tree
+    const menuList: Array<TreeModel> = RecursiveRoutes(treeMenu);
+    menuList.forEach(item => {
         if (tempArr.find(x => x.filepath.indexOf(item.FilePath)) > -1) {
             // 添加动态路由
             router.addRoute("admin", {

@@ -15,11 +15,20 @@ const userStore = defineStore("main", {
             RefreshTokenCount: 0,
         }
     },
+    actions: {
+        reset() {
+            this.Token = "";
+            this.IsCollapse = false;
+            this.Tags = [];
+            this.UserMenus = [];
+            this.RefreshTokenCount = 0;
+        }
+    },
     // 状态管理
     persist: {
         enabled: true,
         strategies: [{
-            key: "site", // 指定 key 这个名称会在浏览器本地存储中生成对应的 name
+            key: "ZhaoXiExercise001Site", // 指定 key 这个名称会在浏览器本地存储中生成对应的 name
             storage: localStorage, // 自定义存储方式，默认是 sessionStorage
             // paths: ["UserMenus"] // 要缓存的对象，默认是所有
         }]

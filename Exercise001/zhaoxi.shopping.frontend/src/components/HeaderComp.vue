@@ -1,47 +1,3 @@
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
-import router from "../router";
-import store from "../store/index";
-import userStore from "../store/index";
-import { Expand, House } from "@element-plus/icons-vue";
-import { handleSelect, clickTag } from "../tools/index";
-
-const circleUrl = ref("");
-const nickName = ref("");
-const tags = ref(userStore().Tags); // 从全局状态中读取 Tags
-const changeIsCollapse = () => {
-    // 修改值
-    store().$patch({
-        IsCollapse: !store().IsCollapse
-    });
-    console.log("ChangeIsCollapse");
-};
-const logOut = () => {
-    console.log("logOut");
-};
-const handleClose = (index: string) => {
-    tags.value = tags.value.filter(x => x.Index != index);
-    store().$patch({
-        Tags: tags.value
-    });
-    console.log(index);
-};
-const tagClick = (index: string) => {
-    console.log(index);
-};
-// 页面加载时读取状态
-onMounted(() => {
-    // 读取当前路由
-    let index = router.currentRoute.value.path;
-    if (!tags.value.find(x => x.Checked)) {
-        handleSelect(index); // 设置 Tags
-        clickTag(index) // 点击 Tags
-    } else {
-        clickTag(index) // 点击 Tags
-    }
-});
-</script>
-
 <template>
     <el-row>
         <el-col :span="1">
@@ -92,11 +48,52 @@ onMounted(() => {
             <div>
                 <el-tag v-for="item in tags" :key="item.Index" closable class="ml-2"
                     :effect="item.Checked ? 'dark' : 'plain'" @close="handleClose(item.Index)"
-                    @click="tagClick(item.Index)">{{ item.Name }}</el-tag>
+                    @click="clickTag(item.Index)">{{ item.Name }}</el-tag>
             </div>
         </el-col>
     </el-row>
 </template>
+
+<script setup lang="ts">
+import { ref, onMounted } from "vue";
+import router from "../router";
+import store from "../store/index";
+import userStore from "../store/index";
+import { Expand, House } from "@element-plus/icons-vue";
+import { handleSelect, clickTag, FormatToken } from "../tools/index";
+
+const circleUrl = ref(FormatToken(store().Token)?.Image);
+const nickName = ref(FormatToken(store().Token)?.NickName);
+const handleClose = (index: string) => {
+    tags.value = tags.value.filter(x => x.Index != index);
+    store().$patch({
+        Tags: tags.value
+    });
+    console.log(index);
+};
+const changeIsCollapse = () => {
+    // 修改值
+    store().$patch({
+        IsCollapse: !store().IsCollapse
+    });
+};
+const tags = ref(userStore().Tags); // 从全局状态中读取 Tags
+// 页面加载时读取状态
+onMounted(() => {
+    // 读取当前路由
+    let index = router.currentRoute.value.path;
+    if (!tags.value.find(x => x.Checked)) {
+        handleSelect(index); // 设置 Tags
+        clickTag(index) // 点击 Tags
+    } else {
+        clickTag(index) // 点击 Tags
+    }
+});
+const logOut = () => {
+    store().reset();
+    router.push({ path: "/login" });
+};
+</script>
 
 <style scoped lang="scss">
 .el-header {

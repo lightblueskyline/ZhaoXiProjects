@@ -90,6 +90,7 @@ export const GetToken = (obj: {}) => {
 };
 // 刷新 Token
 export const GetNewToken = (userID: string) => {
+    // 未使用拦截器
     return axios.get(`/api/Login/RefreshToken?userID=${userID}`);
 };
 
@@ -123,3 +124,25 @@ export const GetRoles = (req: {}) => {
 export const SettingMenu = (roleID: string, menuIDs: string) => {
     return instance.get(`/api/Menu/Delete?roleID=${roleID}&menuIDs=${menuIDs}`);
 };
+
+// 用户模块
+export const GetUsers = (obj: {}) => {
+    return instance.post("/api/User/GetUsers", obj)
+}
+export const AddUser = (req: {}) => {
+    return instance.post("/api/User/Add", req)
+}
+export const EditUser = (req: {}) => {
+    return instance.post("/api/User/Edit", req)
+}
+export const DeleteUser = (id: string) => {
+    return instance.get(`/api/User/Delete?id=${id}`)
+}
+export const SettingRole = (uid: string, rids: string) => {
+    return instance.get(`/api/User/SettingRole?uid=${uid}&rids=${rids}`)
+}
+
+// 个人信息模块
+export const EditPersonInfo = (req: {}) => {
+    return instance.post(`/api/User/EditNickNameOrPassword`, req)
+}
