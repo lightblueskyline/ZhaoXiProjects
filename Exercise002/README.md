@@ -524,3 +524,226 @@ fullName.value = "上官 海棠";
 可以对一个样式属性提供多个(不同前缀)值  
 `<div :style="{display:['-webkit-box','-ms-flexbox','flex']}">...</div>`  
 数组仅会渲染浏览器支持的最后一个值。
+
+### 条件渲染
+
+`v-if` 指令用于条件性的渲染一块内容。这块内容只会在指令的表达式返回真值时才被渲染。
+`<h1 v-if="awesome">Vue is awesome!</h1>`  
+也可以使用 `v-else` 为 `v-if` 添加一个 else 区块。  
+`<button @click="awesome =!awesome">Toggle</button>`
+
+```html
+<h3 v-if="awesome">Vue is awesome!</h3>
+<h3 v-else>awesome = false</h3>
+```
+
+一个 `v-else` 元素必须跟在一个 `v-if` 或者 `v-else-if` 元素后面，否则它将不会被识别。  
+`v-else-if` 提供的是相应于 `v-if` 的 "else if" 区块。它可以连续多次重复使用。
+
+### \<template> 上的 v-if
+
+因为 `v-if` 是一个指令，它必须依附于某个元素。但如果我们想要切换不止一个元素呢？在这种情况下我们可以在一个 `<template>` 元素上使用 `v-if` 这只是一个不可见的包装元素，最后渲染的结果并不会包含这个 `<template>` 元素。
+
+```html
+<template v-if="ok">
+    <h1>Title</h1>
+    <p>Paragraph 1</p>
+    <p>Paragraph 2</p>
+</template>
+```
+
+`v-else` & `v-else-if` 也可以在 `<template>` 元素上使用。
+
+### v-show
+
+另一个可以用来按条件显示一个元素的指令是 `v-show` 其用法基本一样：  
+`<h3 v-show="ok">Hello</h3>`  
+不同之处在于 `v-show` 会在 DOM 渲染中保留该元素。  
+`v-show` 仅切换了该元素上名为 `display` 的 CSS 属性。  
+`v-show` 不支持在 `<template>` 元素上使用，也不能和 `v-else` 搭配使用。
+
+### **v-if** *vs* **v-show**
+
+`v-if` 是“真实的”按条件渲染，因为它确保了在切换时，条件区块内的事件监听器和子组件都会被销毁与重建。  
+`v-if` 也是惰性的： 如果在初次渲染时条件值为 false 则不会做任何事。条件区块只有当条件首次变为 true 时才被渲染。  
+相比之下 `v-show` 简单许多，元素无论初始条件如何，始终都会被渲染，只有 `CSS display` 属性会被切换。  
+总的来说 `v-if` 有更高的切换开销，而 `v-show` 有更高的初始渲染开销。因此，如果需要频繁切换，则使用 `v-show` 较好，如果在运行时绑定条件很少改变，则 `v-if` 会更合适。
+
+### v-for
+
+可以使用 v-for 指令基于一个数组来渲染一个列表。 v-for 指令的值需要使用 item in items 形式的特殊语法，其中 items 源数据的数组，而 item 是迭代项的别名：  
+`const items = ref([{message:"Foo"},{message:"Bar"}])`  
+`<ul>`  
+`<li v-for="item in items">{{ item.message }}</li>`  
+`</ul>`  
+在 v-for 块中可以完整的访问父作用域内的属性和变量。 v-for 也支持使用可选的第二个参数表示当前项的位置索引。  
+`const parentMessage = ref("Parent")`  
+`const items = ref([{message:"Foo"},{message:"Bar"}])`  
+`<ul>`  
+`<li v-for="(item, index) in items">{{ parentMessage }}-{{ index }}-{{ item.message }}</li>`  
+`</ul>`
+
+### v-for 与对象
+
+可以使用 v-for 来遍历一个对象的所有属性。遍历的顺序会基于对该对象调用 `Object.keys()` 的返回值来决定。
+
+```ts
+const myObject = reactive({
+  title: "How to do lists in Vue",
+  author: "Jane Doe",
+  publishAt: "2016-04-10"
+});
+
+const myObject = ref({
+  title: "How to do lists in Vue",
+  author: "Jane Doe",
+  publishAt: "2016-04-10"
+});
+```
+
+第二个参数键 `(value, key)`  
+第三个参数索引 `(value, key, index)`
+
+```html
+<div>
+  <h2>v-for 与对象</h2>
+  <ul>
+    <li v-for="(value, key) in myObject">{{ value }} - {{ key }}</li>
+  </ul>
+  <ul>
+    <li v-for="(value, key, index) in myObject">{{ value }} - {{ key }} - {{ index }}</li>
+  </ul>
+</div>
+```
+
+### 在 v-for 里使用范围值
+
+`v-for` 可以直接接收一个整数值。在这种用例中，会将该模板基于 1...n 的取值范围重复多次。  
+`<span v-for="n in 10">{{n}}</span>`  
+**PS:** 此处 n 的初始值是从 1 开始而非 0
+
+### **v-if** & **v-for**
+
+PS:  
+同时使用 `v-if` 和 `v-for` 是不推荐的，因为这样二者的优先级不明显。不建议处于同一层级。  
+当 `v-if` 和 `v-for` 同时存在于某个元素上的时候 `v-if` 会首先被执行。
+
+```html
+<div v-if="ok">
+  <span v-for="n in 10">{{ n }}</span>
+</div>
+```
+
+### 监听事件
+
+可以使用 `v-on` (简写为： @)来监听 DOM 事件，并在事件触发时执行对应的 JavaScript 用法： `v-on:click="methodName"` 或者 `@click="methodName"`  
+事件处理器的值可以是：
+
+1. 内联事件处理器： 事件被触发时执行的内联 JavaScript 语句(与 onclick 类似)。
+2. 方法事件处理器： 一个指向组件上定义的方法的属性名或是路径。
+
+```ts
+const Func1 = () => {
+  console.log("Func1()");
+};
+```
+
+```html
+<button v-on:click="Func1">点击我</button>
+```
+
+### 内联事件处理器
+
+内联事件处理器通常用于简单场景。例如：
+
+```ts
+const count = ref(0);
+```
+
+```html
+<div>
+  <button @click="count++">Add 1</button>
+  <p>Count is {{ count }}</p>
+</div>
+```
+
+### 方法事件处理器
+
+随着事件处理器的逻辑变得愈发复杂，内敛代码方式变得不够灵活。因此 `v-on` 也可以接收一个方法名或对某个方法的调用。
+
+```ts
+const name = ref("Vue.js");
+function greet(event) {
+  alert(`Hello ${name.value}`);
+  // event 是 DOM 原生事件
+  if (event) {
+    alert(event.target.tagName);
+  }
+}
+```
+
+```html
+<button @click="greet">Greet</button>
+```
+
+### 按键修饰符
+
+在监听键盘事件时，经常需要检查特定按键。 Vue 允许在 v-on 或 @ 监听按键事件时添加案件修饰符。
+
+```html
+<!-- 仅在按键为 enter 时调用 submit -->
+<input type="text" placeholder="回车登录" @keyup.enter="submit">
+```
+
+### 按键别名
+
+Vue 为一些常用的按键提供了别名：
+
+|普通按键|系统按键|
+|----|----|
+|.enter|.ctrl|
+|.tab|.alt|
+|.delete|.shift|
+|.esc|.meta|
+|.space||
+|.up||
+|.down||
+|.left||
+|.right||
+
+### 表单输入绑定
+
+在前端处理表单时，我们常常需要将表单输入框的内容同步给 JavaScript 中相应的变量。手动连接值绑定和更改事件监听器可能会很麻烦。
+
+```ts
+const text = ref();
+```
+
+```html
+<div>
+  <h2>表单输入绑定</h2>
+  <p>{{ text }}</p>
+  <p>
+    <!-- 通过内联事件实现 -->
+    <!-- <input type="text" name="" id="" :value="text" @input="event => text = event.target.value"> -->
+    <!-- 通过 v-model 实现 -->
+    <input type="text" name="" id="" v-model="text">
+  </p>
+</div>
+```
+
+### 生命周期
+
+每个 Vue 组件实例在创建时都需要经历一系列的初始化步骤，比如设置好数据侦听，编译模板，挂载实例到 DOM 以及在数据改变时更新 DOM 在此过程中，它也会运行被称为生命周期钩子的函数，让开发者有机会在特定阶段运行自己的代码。
+
+### 注册周期钩子
+
+举例说明 `onMounted` 钩子可以用来完成组件完成初始渲染并创建 DOM 节点后运行代码。
+
+```ts
+import { ref, onMounted } from 'vue';
+
+onMounted(() => {
+  console.log("The component is now mounted.");
+});
+```
