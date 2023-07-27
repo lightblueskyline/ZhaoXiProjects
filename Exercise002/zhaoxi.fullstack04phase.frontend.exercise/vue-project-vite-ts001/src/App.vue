@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from "vue"
+import { reactive, ref, computed } from "vue"
 
 const state = reactive({
   message: "Hello World!",
@@ -26,6 +26,42 @@ const TempFunc1 = () => {
 const DoSomething = () => {
   console.log("DoSomething");
 };
+
+// ---------- 响应式的基础 ----------
+const raw = { count: 99 }; // 定义常量
+const state1 = reactive(raw); // 包装为代理对象
+// debugger // 运行至此处会自动中断至此处
+console.log(raw)
+console.log(state1)
+console.log(raw === state1); // 原始对象和代理对象不是完全相等的
+
+// ---------- ref() ----------
+const number = ref(100);
+console.log(number);
+console.log(number.value);
+
+// ---------- 解构 (ES6) ----------
+const obj = {
+  foo: ref(1),
+  bar: ref(2)
+};
+const { foo, bar } = obj
+console.log(foo, bar);
+
+// ---------- 数组和集合类型的 ref 解包 ----------
+const book = ref("资治通鉴");
+const books = reactive([book]);
+// 这里需要 .value
+console.log(books[0].value);
+
+// ---------- 计算属性 ----------
+const author = reactive({
+  name: 'John Doe',
+  books: ['Vue-1', 'Vue-2', 'Vue-3']
+});
+const publishedBooksMessage = computed(() => {
+  return author.books.length > 0 ? 'Yes' : 'No';
+});
 </script>
 
 <template>
@@ -61,9 +97,20 @@ const DoSomething = () => {
   </div>
   <!-- 参数 Argument -->
   <div>
-    <a v-on:click="DoSomething">......</a>
+    <a v-on:click="DoSomething">点我做某事</a>
     <br>
-    <a @click="DoSomething">...简写形式...</a>
+    <a @click="DoSomething">...简写形式，点我做某事...</a>
+  </div>
+  <!-- 解包 -->
+  <div>{{ number }}</div>
+  <!-- 计算属性 -->
+  <div>
+    <p>Has published books</p>
+    <!-- 表达式写法，逻辑复杂时不太优雅 -->
+    <span>{{ author.books.length > 0 ? 'Yes' : 'No' }}</span>
+    <!-- 通过计算属性 -->
+    <br>
+    <span>{{ `通过计算属性 ${publishedBooksMessage}` }}</span>
   </div>
 </template>
 

@@ -260,3 +260,267 @@ Vue 实际上所有的数据绑定中都支持完整的 JavaScript 表达式：
 当使用 DOM 内嵌模板(直接写在 HTML 文件里的模板)时，需要避免在名称中使用大写字母，因为浏览器会强制将其转换为小写：  
 `<a:[someAttr]="value">...</a>`  
 上面的例子将会在 DOM 内嵌模板中被转换为 `:[someattr]` 如果组件拥有 "someAttr" 属性而非 "someattr" 这段代码将不会工作。单文件组件内的模板不受此限制。
+
+### 修饰符 Modifier
+
+修饰符是以点开头的特殊后缀，表明指令需要以一些特殊的方式被绑定。例如： `.prevent` 修饰符会告知 `v-on` 指令对触发的事件调用 `event.preventDefault()`  
+`<form @submit.prevent="onSubmit">...</form>`  
+之后在讲到 `v-on` 和 `v-model` 的功能时，将会看到其他修饰符的例子。  
+完整的指令语法： `v-on:submit.prevent="onSubmit"`
+
+### 响应式的基础
+
+可以使用 `reactive()` 函数创建一个响应式对象或数组：  
+代理对象： `const state = reactive({count:99})`  
+`console.log(state.count)`  
+需要注意的是：  
+
+```ts
+import {reactive} from 'vue';
+
+const raw = {count:99}
+const state = reactive(raw)
+console.log(state)
+// 代理对象和原始对象不是全等的
+console.log(raw === state)
+```
+
+只有代理对象时响应式的，更改原始对象不会触发更新。  
+因此，使用 Vue 的响应式系统的最佳实践是： 仅使用你声明对象的代理版本。
+
+### reactive() 的局限性
+
+reactive() API 有两条限制：
+
+1. 仅对对象类型有效(对象、数组和 Map, Set 这样的集合类型)，而对 string, number, boolean 这样的原始类型无效。
+2. 因为 Vue 的响应式系统是通过属性访问进行追踪的，因此我们**必须始终保持对该响应式对象的相同引用**。这意味着我们不可以随时的“替换”一个响应式对象，因为这将会导致对初始引用的响应性连接丢失：  
+`let state = reactive({count:0})`  
+`state = reactive({count:1})` 上面的引用 `({count:0})` 将不再被追踪(响应性连接丢失！)  
+同时这也意味着当我们将响应式对象的属性赋值或解构至本地变量时，或是将该属性传入一个函数时，我们会失去响应性：  
+
+    ```ts
+    const state = reactive({count:0});
+    // n 是一个局部变量，同 state.count
+    // 失去响应性连接
+    let n = state.count
+    // 不影响原始的 state
+    n++
+    // count 也和 state.count 失去了响应性连接
+    let {count}=state
+    // 不会影响原始的 state
+    count ++
+    ```
+
+### ref()
+
+`reactive()` 的种种限制归根结底是因为 JavaScript 没有可以作用于所有值类型的“引用”机制。为此 Vue 提供了一个 `ref()` 方法来允许我们创建可以使用任何值类型的响应式 `ref`  
+
+```ts
+import {ref} from 'vue';
+
+// ref() 将传入参数的值包装为一个带 .value 属性的 ref 对象
+const count = ref(0);
+console.log(count); // {value:0}
+console.log(count.value); // 0
+count.value++;
+console.log(count.value); // 1
+```
+
+和响应式对象的属性类似， `ref` 的 `.value` 属性也是响应式的  
+`ref` 被传递给函数或是从一般对象上被解构时，不会丢失响应性
+
+```ts
+const obj = {
+    foo: ref(1),
+    bar: ref(2)
+};
+const {foo, bar} = obj;
+console.log(foo, bar);
+```
+
+简言之，`ref()` 让我们能创造一种对任意值的“引用”，并能够在不丢失响应性的前提下传递这些引用。
+
+### ref() 在模板中的解包
+
+当 `ref` 在模板中作为顶层属性被访问时，它们会被自动“解包”，所以不需要使用 `.value` 下面是之前的计数器例子，用 `ref()` 代替：
+
+```html
+<script setup>
+    import {ref} from 'vue'
+
+    const count = ref(0)
+
+    function increment() {
+        count.value++
+    }
+</script>
+
+<template>
+    <button @click="increment">
+    <!-- 无需 .value -->
+    {{count}}
+    </button>
+</template>
+```
+
+### ref 在响应式对象中的解包
+
+当一个 `ref` 被嵌套在一个响应式对象中，作为属性被访问或更改时，它会自动解包，因此会表现的和一般属性一样：
+
+```ts
+const count = ref(0);
+const state = reactive({count});
+
+console.log(state.count); // 0
+state.count = 1;
+console.log(count.value); // 1
+```
+
+### 数组和集合类型的 ref 解包
+
+同响应式对象不同，当 `ref` 作为响应式数组或像 Map 这种原生集合类型的元素被访问时，不会进行解包。
+
+```ts
+const books = reactive([ref("Vue 3 Guide")]);
+// 这里需要 .value
+console.log(books[0].value);
+//
+const map = reactive(new Map(['count']));
+// 这里需要 .value
+```
+
+### 计算属性
+
+模板中的表达式虽然方便，但也只能用来做简单的操作。如果在模板中写入太多的逻辑，会让模板变得臃肿，难以维护。比如说，我们有这样一个包含嵌套数组的对象：
+
+```ts
+const author = reactive({
+    name: 'John Doe',
+    books: [
+        'Vue - 1',
+        'Vue - 2',
+        'Vue - 3'
+    ]
+});
+// 我们像根据 author 是否已有一些书籍来展示不同的信息
+// <p>Has published books:</p>
+// <span>{{ author.books.length > 0 ? 'Yes':'No' }}</span>
+```
+
+推荐使用计算属性来描述依赖响应式状态的复杂逻辑。
+
+```ts
+import { reactive, ref, computed } from "vue"
+
+const author = reactive({
+  name: 'John Doe',
+  books: ['Vue-1', 'Vue-2', 'Vue-3']
+});
+// ---------- 计算属性 ----------
+const publishedBooksMessage = computed(() => {
+  return author.books.length > 0 ? 'Yes' : 'No';
+});
+// <span>{{ `通过计算属性 ${publishedBooksMessage}` }}</span>
+```
+
+### 计算属性缓存 vs 方法
+
+你可能注意到我们在表达式中像这样调用一个函数也会获得同计算属性相同的结果：  
+`<p>{{ calculateBooksMessage() }}</p>`  
+组件中  
+`function calculateBooksMessage(){ return author.books.length>0?"Yes":"No"}`  
+若我们将同样的函数定义为一个方法而不是计算属性，两种方法在结果上确实是完全相同的，然而，不同之处在于计算属性值会基于其响应式依赖缓存。一个计算属性仅会在其响应式依赖更新时才重新计算。这意味着只要 `author.books` 不改变，无论多少次访问 `publishedBooksMessage` 都会立即返回先前的计算结果，而不用重复执行 `getter` 函数。  
+这也解释了为什么下面的计算属性永远不会更新，因为 `Date.now()` 并不是一个响应式依赖：  
+`const now = computed(()=>{Date.now()});`  
+相比之下，方法调用总是会在重新渲染发生时再次执行函数。
+
+### 可写计算属性(不推荐)
+
+计算属性默认是只读的。当你尝试修改一个计算属性时，你会收到一个运行时警告。只在某些特殊场景中你可能才需要用到“可写”的属性，你可以通过同时提供 `getter & setter` 来创建。
+
+```ts
+import { ref,computed } from "vue";
+const firstName = ref("John");
+const lastName = ref("Doe");
+const fullName = computed(() => {
+    // getter
+    get() {
+        return firstName.value + " " + lastName;
+    },
+    // setter
+    set(newValue) {
+        // PS: 这里使用的是解构赋值语法
+        [firstName.value, lastName.value] = newValue.split(" ");
+    }
+});
+fullName.value = "上官 海棠";
+```
+
+### Class 与 Style 绑定
+
+数据绑定的一个常见需求场景是操纵元素的 `CSS class` 列表和内联样式。  
+因为 `class` 和 `style` 都是 `Attribute` 我们可以和其他 `attribute` 一样使用 `v-bind` 将它们和动态的字符串绑定。  
+但是，在处理比较复杂的绑定时，通过拼接生成字符串是麻烦且易出错的。  
+因此 Vue 专门为 `class` 和 `style` 的 `v-bind` 用法提供了特殊的功能增强。  
+除了字符串外，表达式的值也可以是对象或数组。
+
+### 绑定对象
+
+我们可以给 :`class`(`v-bind:class` 的缩写) 传递一个对象来动态切换 `class`  
+`<div :class="{ active: isActive }"></div>`  
+上面的语法表示 `active` 是否存在取决于数据属性 `isActive` 的真假值
+
+### 多个 Class
+
+可以在对象中写多个字段来操作多个 `class` 此外 `:class` 指令也可以和一般的 `class attribute` 共存。  
+`const isActive = ref(true)`  
+`const hasError = ref(false)`  
+配合以下模板：  
+`<div class="static" :class="{ active:isActive,'text-danger':hasError}">...</div>`  
+渲染结果是：  
+`<div class="static active">...</div>`
+
+### 绑定数组
+
+可以给 :class 绑定一个数组来渲染多个 CSS class  
+`const activeClass = ref("active")`  
+`const errorClass = ref("text-danger")`
+`<div :class="[activeClass, errorClass]">...</div>`  
+渲染结果是：  
+`<div class="active text-danger">...</div>`  
+若想在数组中有条件的渲染某个 `class` 可以使用三元表达式：  
+`<div :class="[isActive?activeClass:'', errorClass]">...</div>`  
+`errorClass` 会一直存在，但 `activeClass` 只会在 `isActive` 为真时才存在。  
+然而，这可能在有多个依赖条件的 `class` 时会有些冗长。因此也可以在数组中嵌套对象：  
+`<div :class="[{active:isActive}, errorClass]">...</div>`
+
+### 在组件上使用
+
+对于只有一个根元素的组件，当你使用了 class attribute 时，这些 class 会被添加到跟元素上，并与该元素上已有的 class 合并。  
+示例： 声明一个组件 MyComponent 模板如下：  
+子组件模板： `<p class="foo bar">...</p>`  
+使用时添加一些 class `<MyComponent class="baz boo">...</MyComponent>`  
+渲染后的 HTML `<p class="foo bar baz boo">...</p>`
+
+### 绑定内联样式-绑定对象
+
+`:style` 支持绑定 JavaScript 对象值，对应的是 HTML 元素的 `style` 属性  
+`const activeColor = ref("red")`  
+`const fontSize = ref(30)`
+`<div :style="{color:activeColor, fontSize:fontSize+'px'}">...</div>`  
+`<div :style="{color:activeColor, font-size:fontSize+'px'}">...</div>`  
+直接绑定一个样式对象，可以使模板更加简洁：  
+`const styleObj = reactive({color:"red", fontSize:"13px"});`  
+`<div :style="styleObj">...</div>`  
+若样式对象需要更复杂的逻辑，可以使用返回样式对象的计算属性。
+
+### Style 绑定数组
+
+可以给 :style 绑定一个包含多个样式对象的数组。这些对象会被合并后渲染到同一元素上：  
+`<div :style="[baseStyle, overridingStyle]">...</div>`
+
+### 样式多值
+
+可以对一个样式属性提供多个(不同前缀)值  
+`<div :style="{display:['-webkit-box','-ms-flexbox','flex']}">...</div>`  
+数组仅会渲染浏览器支持的最后一个值。
