@@ -747,3 +747,267 @@ onMounted(() => {
   console.log("The component is now mounted.");
 });
 ```
+
+### 侦听器
+
+计算属性允许我们声明性地计算衍生值。然而在有些情况下，我们需要在状态变化时执行一些“副作用”： 例如更改 DOM 或是根据异步操作的结果去修改另一处的状态。  
+在组合式 API 中，我们可以使用 `watch` 函数在每次响应状态发生变化时触发回调函数：
+
+```ts
+// 侦听输入框新旧值的变化
+watch(searchVal, (newQuestion, oldQuestion) => {
+    console.log(`newQuestion: ${newQuestion}`);
+    console.log(`oldQuestion: ${oldQuestion}`);
+});
+```
+
+### 模板引用
+
+虽然 Vue 的声明性渲染模型为你抽象了大部分对 DOM 的直接操作，但在某些情况下，我们仍然需要直接访问底层 DOM 元素。要实现这一点，我们可以使用特殊的 `ref attribute`  
+`<input ref="templateVal" />`  
+`ref` 是一个特殊的 `attribute` 和 `v-for` 章节中提到的 `key` 类似。它允许我们在一个特定的 DOM 元素或子组件实例被挂载后，获得对它的直接引用。这可能很有用，比如说在组件挂载时将焦点设置到一个 `input` 元素上，或在一个元素上初始化一个第三方库。
+
+```ts
+// ---------- 模板引用 ----------
+const templateVal = ref(); // 创建模板引用名称
+onMounted(() => {
+  console.log("The component is now mounted.");
+  // 页面加载完成后，将光标设置至此元素
+  templateVal.value.focus();
+  console.log("Set focus to input(templateVal)");
+});
+```
+
+```html
+<p><input type="text" name="" id="" ref="templateVal"></p>
+```
+
+### 组件基础
+
+组件允许我们将 UI 划分为独立的、可重用的部分，并且可以对每个部分进行单独的思考。在实际应用中，组件常常被组织成层层嵌套的树状结构。
+
+### 定义一个组件
+
+当使用构建步骤时，我们一般会将 Vue 组件定义在一个单独的 `.vue` 文件中，这被叫做单文件组件(简称为： SFC)
+
+```html
+<!-- vue-project-vite-ts003\src\components\MyComponent.vue -->
+<!-- 使用双单词定义组件文件名称 -->
+<script setup lang="ts">
+import { ref } from "vue";
+
+const count = ref(0);
+</script>
+
+<template>
+    <button @click="$event => count++">You click me {{ count }} times.</button>
+</template>
+```
+
+使用组件：
+
+```ts
+// 在脚本区块顶部引入
+import MyComponent from './components/MyComponent.vue';
+```
+
+```html
+<!-- 组件基础 -->
+<div>
+  <h2>组件基础</h2>
+  <p>
+    <!-- 作为标签来使用 -->
+    <!-- 组件可以复用 -->
+    <MyComponent></MyComponent>
+  </p>
+</div>
+```
+
+### 组件传递 props
+
+定义组件：
+
+```html
+<script setup lang="ts">
+import { ref } from "vue";
+
+defineProps({
+    // 1. 类型声明
+    // 2. 数据类型
+    // 3. 大写字母开头
+    title: String
+});
+
+const count = ref(0);
+</script>
+
+<template>
+    <h3>{{ title }}</h3>
+    <button @click="$event => count++">You click me {{ count }} times.</button>
+</template>
+
+<style scoped></style>
+```
+
+使用组件：
+
+```html
+<!-- import MyComponent1 from './components/MyComponent1.vue'; -->
+<!-- 组件传递 props -->
+<div>
+  <h2>组件传递 props</h2>
+  <p>
+    <MyComponent1 title="标题一"></MyComponent1>
+  </p>
+  <p>
+    <MyComponent1 title="标题二"></MyComponent1>
+  </p>
+</div>
+```
+
+### 组件监听事件
+
+在组件的模板表达式中，可以直接使用 `$emit` 方法触发自定义事件。  
+`<div><button @click="$emit('change')">调用父组件并修改变量</button></div>`  
+父组件可以通过 `v-on`(简写 @)来监听事件  
+子组件：
+
+```html
+<!-- vue-project-vite-ts003\src\components\MyComponent2.vue -->
+<!-- 组件监听事件 -->
+<script setup lang="ts">
+defineProps({
+    // 1. 类型声明
+    // 2. 数据类型
+    // 3. 大写字母开头
+    title: String
+});
+</script>
+
+<template>
+    <h3>{{ title }}</h3>
+    <!-- parentFunc 同父组件中定义的方法名称 -->
+    <button @click="$event => $emit('parentFunc')">子组件调用父组件中的方法并修改变量</button>
+</template>
+
+<style scoped></style>
+```
+
+父组件：
+
+```ts
+import MyComponent2 from './components/MyComponent2.vue';
+// ---------- 组件监听事件 ----------
+const emitsBoolean = ref(true);
+const parentFunc = () => {
+  emitsBoolean.value = !emitsBoolean.value;
+};
+```
+
+```html
+<!-- 组件监听事件 -->
+<div>
+  <h2>组件监听事件</h2>
+  <p>{{ emitsBoolean }}</p>
+  <p>
+    <!-- <MyComponent2 title="標題參數" @parentFunc="$event => { emitsBoolean = !emitsBoolean }"></MyComponent2> -->
+    <MyComponent2 title="標題參數" @parentFunc="parentFunc"></MyComponent2>
+  </p>
+</div>
+```
+
+### 组件监听事件传递参数
+
+子组件：
+
+```html
+<script setup lang="ts">
+defineProps({
+    // 1. 类型声明
+    // 2. 数据类型
+    // 3. 大写字母开头
+    title: String
+});
+</script>
+
+<template>
+    <h3>{{ title }}</h3>
+    <!-- parentFunc 同父组件中定义的方法名称 -->
+    <button @click="$event => $emit('parentFunc1', '参数来自组件 MyComponent3')">子组件调用父组件中的方法传递参数</button>
+</template>
+
+<style scoped></style>
+```
+
+父组件：
+
+```ts
+import MyComponent3 from './components/MyComponent3.vue';
+// ---------- 组件监听事件传递参数 ----------
+const parentFunc1 = (param: string) => {
+  console.log(param);
+};
+```
+
+```html
+<!-- 组件监听事件传递参数 -->
+<div>
+  <h2>组件监听事件传递参数</h2>
+  <p>
+    <MyComponent3 title="标题参数 MyComponent3" @parentFunc1="parentFunc1"></MyComponent3>
+  </p>
+</div>
+```
+
+### 声明事件的触发
+
+子组件：
+
+```html
+<script setup lang="ts">
+defineProps({
+    // 1. 类型声明
+    // 2. 数据类型
+    // 3. 大写字母开头
+    title: String
+});
+
+const emits = defineEmits(['parentFunc2', 'parentFunc3']);
+const Handler = () => {
+    emits("parentFunc2");
+    emits("parentFunc3");
+}
+</script>
+
+<template>
+    <h3>{{ title }}</h3>
+    <!-- parentFunc 同父组件中定义的方法名称 -->
+    <!-- <button @click="$event => $emit('parentFunc1', '参数来自组件 MyComponent3')">子组件调用父组件中的方法传递参数</button> -->
+    <button @click="Handler">通过声明触发的事件</button>
+</template>
+
+<style scoped></style> 
+```
+
+父组件：
+
+```ts
+import MyComponent4 from './components/MyComponent4.vue';
+// ---------- 声明事件的触发 ----------
+const parentFunc2 = () => {
+  console.log("vue-project-vite-ts003\src\components\MyComponent4.vue - parentFunc2");
+};
+const parentFunc3 = () => {
+  console.log("vue-project-vite-ts003\src\components\MyComponent4.vue - parentFunc3");
+};
+```
+
+```html
+<!-- 声明事件的触发 -->
+<div>
+  <h2>声明事件的触发</h2>
+  <p>
+    <MyComponent4 title="标题参数 MyComponent4" @parentFunc2="parentFunc2" @parentFunc3="parentFunc3"></MyComponent4>
+  </p>
+</div>
+```

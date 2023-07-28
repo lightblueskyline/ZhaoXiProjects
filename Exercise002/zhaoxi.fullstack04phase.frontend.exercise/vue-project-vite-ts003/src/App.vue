@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import MyComponent from './components/MyComponent.vue';
+import MyComponent1 from './components/MyComponent1.vue';
+import MyComponent2 from './components/MyComponent2.vue';
+import MyComponent3 from './components/MyComponent3.vue';
+import MyComponent4 from './components/MyComponent4.vue';
 
 // ---------- 条件渲染 ----------
 const awesome = ref(true);
@@ -46,6 +51,43 @@ const text = ref();
 onMounted(() => {
   console.log("The component is now mounted.");
 });
+
+// ---------- 侦听器 ----------
+const searchVal = ref();
+watch(searchVal, (newValue, oldValue) => {
+  // 参数一： 新值
+  // 参数二： 旧值
+  console.log(`newValue: ${newValue}`);
+  console.log(`oldValue: ${oldValue}`);
+});
+
+// ---------- 模板引用 ----------
+const templateVal = ref(); // 创建模板引用名称
+onMounted(() => {
+  console.log("The component is now mounted.");
+  // 页面加载完成后，将光标设置至此元素
+  templateVal.value.focus();
+  console.log("Set focus to input(templateVal)");
+});
+
+// ---------- 组件监听事件 ----------
+const emitsBoolean = ref(true);
+const parentFunc = () => {
+  emitsBoolean.value = !emitsBoolean.value;
+};
+
+// ---------- 组件监听事件传递参数 ----------
+const parentFunc1 = (param: string) => {
+  console.log(param);
+};
+
+// ---------- 声明事件的触发 ----------
+const parentFunc2 = () => {
+  console.log("vue-project-vite-ts003\src\components\MyComponent4.vue - parentFunc2");
+};
+const parentFunc3 = () => {
+  console.log("vue-project-vite-ts003\src\components\MyComponent4.vue - parentFunc3");
+};
 </script>
 
 <template>
@@ -123,6 +165,65 @@ onMounted(() => {
       <!-- <input type="text" name="" id="" :value="text" @input="event => text = event.target.value"> -->
       <!-- 通过 v-model 实现 -->
       <input type="text" name="" id="" v-model="text">
+    </p>
+  </div>
+
+  <!-- 侦听器 -->
+  <div>
+    <h2>侦听器</h2>
+    <!-- 监听改变前、后值 -->
+    <p><input type="text" name="" id="" v-model="searchVal"></p>
+  </div>
+
+  <!-- 模板引用 -->
+  <div>
+    <h2>模板引用</h2>
+    <p><input type="text" name="" id="" ref="templateVal"></p>
+  </div>
+
+  <!-- 组件基础 -->
+  <div>
+    <h2>组件基础</h2>
+    <p>
+      <!-- 作为标签来使用 -->
+      <MyComponent></MyComponent>
+    </p>
+  </div>
+
+  <!-- 组件传递 props -->
+  <div>
+    <h2>组件传递 props</h2>
+    <p>
+      <MyComponent1 title="标题一"></MyComponent1>
+    </p>
+    <p>
+      <MyComponent1 title="标题二"></MyComponent1>
+    </p>
+  </div>
+
+  <!-- 组件监听事件 -->
+  <div>
+    <h2>组件监听事件</h2>
+    <p>{{ emitsBoolean }}</p>
+    <p>
+      <!-- <MyComponent2 title="標題參數" @parentFunc="$event => { emitsBoolean = !emitsBoolean }"></MyComponent2> -->
+      <MyComponent2 title="标题参数 MyComponent2" @parentFunc="parentFunc"></MyComponent2>
+    </p>
+  </div>
+
+  <!-- 组件监听事件传递参数 -->
+  <div>
+    <h2>组件监听事件传递参数</h2>
+    <p>
+      <MyComponent3 title="标题参数 MyComponent3" @parentFunc1="parentFunc1"></MyComponent3>
+    </p>
+  </div>
+
+  <!-- 声明事件的触发 -->
+  <div>
+    <h2>声明事件的触发</h2>
+    <p>
+      <MyComponent4 title="标题参数 MyComponent4" @parentFunc2="parentFunc2" @parentFunc3="parentFunc3"></MyComponent4>
     </p>
   </div>
 </template>
