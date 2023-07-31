@@ -1059,3 +1059,678 @@ let unusable: void = undefined; // 无意义的变量定义(吃饱了撑的)
 let u: undefined = undefined;
 let n: null = null;
 ```
+
+### 任意值(Any)
+
+**任意值(Any)**用来表示允许赋值为任意类型。  
+
+```ts
+let myFavoriteNumber:any = "seven";
+myFavoriteNumber = 7;
+```
+
+在任意值上访问任何属性都是允许的
+
+```ts
+let anyThing:any = "Hello";
+console.lot(anyThing.myName);
+console.lot(anyThing.myName.firstName);
+```
+
+允许调用任何方法
+
+```ts
+let anyThing:any = "Hello";
+anyThing.setName("Jane");
+anyThing.setName("Jane").sayHello();
+anyThing.myName.setFirstName("Cat");
+```
+
+声明一个变量为任意值之后，对它的任何操作，返回内容的类型都是任意值。
+
+### 类型推论
+
+如果没有明确的指定类型，那么 TypeScript 会依照类型推论(Type Inference)的规则推断出一个类型。
+
+```ts
+let myFavoriteNumber = "seven";
+// myFavoriteNumber = 7; // 报出类型错误
+// 等同于：
+let myFavoriteNumber:string = "seven";
+// myFavoriteNumber = 7; // 报出类型错误
+```
+
+PS: **如果定义的时候没有赋值，不管之后有没有赋值，对会被推断成 any 类型且完全不被类型检查**
+
+```ts
+let myFavoriteNumber;
+myFavoriteNumber = "Seven";
+myFavoriteNumber = 7;
+```
+
+### 联合类型
+
+联合类型(Union Type)表示类型可以为多种类型中的一种。
+
+```ts
+let myFavoriteNumber: string | number;
+myFavoriteNumber = "Seven";
+myFavoriteNumber = 7;
+// myFavoriteNumber = false; // 报错
+```
+
+PS: **访问联合类型的属性和方法**  
+当 TypeScript 不确定一个联合类型的变量到底是哪个类型的时候，我们**只能访问此联合类型的所有类型里共有的属性和方法**
+
+```ts
+// function getLength(param: string | number): number {
+//     return param.length; // 报错 number 没有 length 属性
+// }
+
+function getLength(param: string | number): string {
+    return param.toString();
+}
+
+let myFavoriteNumber: string | number;
+myFavoriteNumber = "Seven";
+console.log(myFavoriteNumber.length);
+myFavoriteNumber = 7;
+console.log(myFavoriteNumber.length); // 报错
+```
+
+### 接口
+
+属性无默认值，若需要有默认值，请使用 Class
+
+```ts
+interface Person {
+    Name: string;
+    Age: number;
+};
+let tom: Person = {
+    Name: "Tom",
+    Age: 25
+};
+console.log(tom.Name, tom.Age);
+// let tom1: Person = {
+//     Name: "Tom1"
+//     // 报错：使用时，不允许缺少 Age
+// }
+```
+
+PS: **可选属性** 不用完全匹配一个形状
+
+```ts
+interface Person {
+    Name: string;
+    Age?: number;
+};
+let tom: Person = {
+    Name: "Tom"
+};
+```
+
+PS: **任意属性**
+
+```ts
+interface Person {
+    Name: string;
+    Age?: number;
+    [propName: string]: any;
+};
+let tom: Person = {
+    Name: "Tom",
+    Gender: "Male"
+};
+```
+
+PS: **只读属性**
+
+```ts
+interface Person {
+    readonly ID: number; // 只允许初始化时赋值
+    Name: string;
+    Age?: number;
+};
+let tom: Person = {
+    ID: 9527,
+    Name: "Tom",
+    Age: 25
+};
+// tom.ID = 777; // 报错
+```
+
+### 数组
+
+```ts
+let fibonacci: number[] = [1, 1, 2, 3, 5];
+fibonacci.push(8);
+```
+
+### 函数01：函数声明、函数表达式
+
+```ts
+// 函数声明(Function Declaration)
+function sum(x, y) {
+    return x + y;
+}
+// 函数表达式(Function Expression)
+let mySum = function (x, y) {
+    return x + y;
+}
+function sumTS(x: number, y: number): number {
+    return x + y;
+}
+```
+
+### 函数表达式
+
+```ts
+// 此代码只对等号右边的匿名函数进行了类型定义
+// 等号左边的 mySum 是通过赋值操作进行类型推断得出
+let mySum = function (x: number, y: number): number {
+    return x + y;
+}
+// 应该如此定义
+let mySum1: (x: number, y: number) => number = function (x: number, y: number): number {
+    return x + y;
+}
+```
+
+### 用接口定义函数的形状
+
+```ts
+interface SearchFunc {
+    (source: string, subString: string): boolean;
+}
+let mySearch: SearchFunc;
+mySearch = function (source: string, subString: string): boolean {
+    return source.search(subString) !== -1;
+}
+```
+
+### 函数02： 可选参数、参数默认值
+
+```ts
+// 函数可选参数
+// 注意： 可选参数必须在必需参数之后，可选参数之后不允许再出现必需参数
+function buildName(firstName: string, lastName?: string): string {
+    if (lastName) {
+        return firstName + " " + lastName;
+    } else {
+        return firstName;
+    }
+}
+let tomcat = buildName("Tom", "Cat");
+let tom = buildName("Tom");
+```
+
+### 函数默认值
+
+```ts
+function buildName(firstName: string, lastName: string = "Cat"): string {
+    if (lastName) {
+        return firstName + " " + lastName;
+    } else {
+        return firstName;
+    }
+}
+let tomcat = buildName("Tom", "Cat");
+let tom = buildName("Tom");
+function buildName1(firstName: string = "Tom", lastName: string): string {
+    return firstName + " " + lastName
+}
+let tomcat1 = buildName1("Tom", "Cat");
+let cat1 = buildName1(undefined, "Cat");
+```
+
+### 函数03： 剩余参数、重载
+
+```ts
+function push1(array, ...items) {
+    items.forEach(function (item) {
+        array.push(item);
+    });
+}
+let a1: any[] = [];
+push1(a1, 1, 2, 3);
+function push2(array: any[], ...items: any[]) {
+    items.forEach(function (item) {
+        array.push(item);
+    });
+}
+let a2 = [];
+push1(a2, 1, 2, 3);
+```
+
+### 函数重载
+
+```ts
+function reverse(x: number | string): number | string | void {
+    if (typeof x === "number") {
+        return Number(x.toString().split("").reverse().join(""));
+    } else if (typeof x === "string") {
+        return (x.split("").reverse().join(""))
+    }
+}
+
+// 通过重载更加清晰化
+function reverse(x: number): number;
+function reverse(x: string): string;
+function reverse(x: number | string): number | string | void {
+    if (typeof x === "number") {
+        return Number(x.toString().split("").reverse().join(""));
+    } else if (typeof x === "string") {
+        return (x.split("").reverse().join(""))
+    }
+}
+reverse(123);
+reverse("321");
+```
+
+### 类型断言01： 语法，将一个联合类型断言为其中一个类型
+
+类型断言(Type Assertion)可以用来手动指定一个值的类型。  
+语法： **值 as 类型**(推荐使用此种方式) 或者 **<类型>值**
+
+### 将一个联合类型断言为其中一个类型
+
+```ts
+interface Cat {
+    Name: string;
+    run(): void;
+}
+interface Fish {
+    Name: string;
+    swim(): void;
+}
+function getName(animal: Cat | Fish): string {
+    return animal.Name;
+}
+function isFish(animal: Cat | Fish): boolean {
+    // 断言
+    if (typeof (animal as Fish) === "function") {
+        return true;
+    }
+    return false;
+}
+```
+
+### 类型断言02： 将父类断言为更加具体的子类
+
+```ts
+class ApiError extends Error {
+    code: number = 0;
+}
+class HttpError extends Error {
+    statusCode: number = 200;
+}
+function isApiError(error: Error): boolean {
+    if (typeof (error as ApiError).code === "number") {
+        return true;
+    }
+    return false;
+}
+// class 可以使用 instanceof
+// interface 不可以使用 instanceof
+function isApiError1(error: Error): boolean {
+    if (error instanceof ApiError) {
+        return true;
+    }
+    return false;
+}
+```
+
+### 类型断言03： 将任何一个类型断言为 Any
+
+```ts
+// window.foo = 1; // 报错
+(window as any).foo = 1;
+```
+
+### 类型断言04： 将 Any 断言为一个具体的类型
+
+```ts
+function getCacheData(key: string): any {
+    return (window as any).cache[key];
+}
+interface Cat {
+    Name: string;
+    run(); void;
+}
+const tom = getCacheData("Tom") as Cat;
+tom.run();
+```
+
+### 类型断言05： 类型断言的限制
+
+- 联合类型可以被断言为其中一个类型
+- 父类可以被断言为子类
+- 任何类型都可以被断言为 any
+- any 可以被断言为任何类型
+
+PS: **类型之间有交叉就可以互相断言**
+
+### 类型断言06： 双重断言
+
+```ts
+interface Cat {
+    run(): void;
+}
+interface Fish {
+    swim(): void;
+}
+function testCat(param: Cat) {
+    return (param as any as Fish);
+}
+```
+
+### 类型断言07： 类型断言 vs 类型转换
+
+类型断言： **指鹿为马**(本质未变)  
+类型转换： **使用魔法**
+
+```ts
+function toBoolean(something: any): boolean {
+    return something as boolean;
+}
+toBoolean(1); // 结果为： 1 (类型断言不是类型转换，不会真的影响到变量的类型)
+// 真正的类型转换
+function toBoolean1(something: any): boolean {
+    return Boolean(something);
+}
+toBoolean1(1); // 结果为： true
+```
+
+### 类型断言08： 类型断言 vs 类型声明
+
+1. A 断言为 B 时，A 和 B 有重叠的部分即可
+2. A 声明为 B 时，A 必需具备 B 的所有属性和方法
+
+类型声明更加严格
+
+### 类型断言09： 类型断言 vs 泛型
+
+```ts
+// 通过泛型实现
+// 最优解决方案
+function getCacheData<T>(key: string): T {
+    return (window as any).cache[key];
+}
+interface Cat {
+    Name: string;
+    run(); void;
+}
+const tom = getCacheData<Cat>("Tom");
+tom.run();
+```
+
+### 使用 type 关键字定义类型别名和字符串字面量类型
+
+```ts
+function getName(n: string | (() => string)): string {
+    if (typeof n === "string") {
+        return n;
+    } else {
+        return n();
+    }
+}
+// 类型别名就是为类型起别名
+type Name = string;
+type NameResolver = () => string;
+type NameOrResolver = Name | NameResolver;
+function getName1(n: NameOrResolver): Name {
+    if (typeof n === "string") {
+        return n;
+    } else {
+        return n();
+    }
+}
+// 类型别名常用于联合类型
+type EventNames = "click" | "scroll" | "mouseover";
+function handleEvent(ele: Element, evetn: EventNames) {
+    // do something
+}
+```
+
+### 元组
+
+数组合并了相同类型的对象，**元组**(Tuple)合并了不同类型的对象。
+
+```ts
+// 对元组进行初始化时，需要提供所有元组类型中指定的项
+let tom: [string, number];
+tom = ["Tom", 25];
+tom.push("Jane"); // 添加越界元素
+// tom.push(true); // 错误，类型出错
+```
+
+### 枚举
+
+```ts
+enum Days { Sun, Mon, Tue, Wed, Thu, Fri, Sat };
+console.log(Days["Mon"] === 1); // true
+```
+
+### 类01： 概念、构造函数、属性和方法
+
+```ts
+class Animal {
+    public _name;
+    constructor(name: string) {
+        this._name = name;
+    } // 构造器
+    sayHi() {
+        return `My name is ${this._name}`;
+    }
+}
+let temp = new Animal("Jack");
+console.log(temp.sayHi());
+// 逻辑中附带行为，使用类实现
+// 若只作为约束，使用接口
+```
+
+### 类02： 存取器 get set
+
+```ts
+class Animal {
+    constructor(name) {
+        this.name = name;
+    }
+    get name() {
+        return "Jack";
+    }
+    set name(value) {
+        console.log("setter: " + value);
+    }
+}
+let temp = new Animal("Kitty"); // setter: Kitty
+temp.name = "Tom"; // setter: Tom
+console.log(temp.name); // Jack
+```
+
+### 类03： 静态方法
+
+使用 `static` 修饰符
+
+```ts
+class Animal {
+    public _name;
+    constructor(name: string) {
+        this._name = name;
+    }
+    sayHi() {
+        return `My name is ${this._name}`;
+    }
+    static sayHello() {
+        return "Hello, 你好呀！";
+    }
+}
+let temp = new Animal("Jack");
+console.log(temp.sayHi()); // My name is Jack
+console.log(Animal.sayHello()); // Hello, 你好呀！
+```
+
+### 类04： 三中访问修饰符： public private protected
+
+- public 全局的，公共的，当前类所涉及到的地方都可以使用
+- private 私有的，只能在类的内部使用，无法在实例化后通过类的实例属性来访问
+- protected 受保护的， private 不允许子类访问， protected 可以在子类中访问
+
+```ts
+class Animal {
+    protected name: string;
+    public constructor(name: string) {
+        this.name = name;
+    }
+}
+class Cat extends Animal {
+    constructor(name: string) {
+        super(name);
+        console.log(this.name);
+    }
+}
+```
+
+### 类05： 参数属性和只读属性关键字
+
+修饰符和 readonly 还可以使用在构造函数参数中，等同于类中定义该属性同时给该属性赋值，使代码更简洁。
+
+```ts
+class Animal {
+    // protected name: string;
+    public constructor(public name: string) {
+        // this.name = name;
+    }
+}
+```
+
+只读属性
+
+```ts
+class Animal {
+    readonly name: string;
+    public constructor(name: string) {
+        this.name = name;
+    }
+}
+let temp = new Animal("Jack");
+console.log(temp.name);
+// temp.name = "Tom"; // 报错
+```
+
+### 类06: 抽象类
+
+定义抽象类和其中的抽象方法 `abstract`  抽象类不允许被实例化
+
+```ts
+abstract class Animal {
+    public name: string;
+    public constructor(name: string) {
+        this.name = name;
+    }
+    public abstract sayHi(): void;
+}
+// let temp = new Animal("Jack"); // 无法实例化抽象类
+class Cat extends Animal {
+    public eat() {
+        console.log(`${this.name} is eating.`);
+    }
+
+    public sayHi(): void {
+        console.log(`My name is ${this.name}`);
+    }
+}
+let cat = new Cat("Tom");
+cat.sayHi();
+cat.eat();
+```
+
+### 类与接口、类继承接口、接口继承接口、接口继承类
+
+TypeScript 中，接口可以继承类
+
+### 泛型01： 概念，简单示例
+
+```ts
+function createArray<T>(length: number, value: T): Array<T> {
+    let result: T[] = [];
+    for (let index = 0; index < length; index++) {
+        result[index] = value;
+    }
+    return result;
+}
+createArray<string>(3, "X");
+createArray(6, "Y");
+```
+
+### 泛型02： 多个类型参数
+
+```ts
+function swap<T, U>(tuple: [T, U]): [U, T] {
+    return [tuple[1], tuple[0]];
+}
+swap([7, "Seven"]); // ["Seven", 7]
+```
+
+### 泛型03： 泛型约束
+
+```ts
+interface Lengthwise {
+    length: number;
+}
+// 约束了泛型 T 必需符合接口 Lengthwise 的形状，也就是必需包含 length 属性
+function loggingIdentity<T extends Lengthwise>(arg: T) {
+    console.log(arg.length);
+    return arg;
+}
+// 如此调用会报错
+// loggingIdentity(7);
+```
+
+### 泛型04： 泛型接口
+
+```ts
+interface CreateArrayFunc {
+    <T>(length: number, value: T): Array<T>;
+}
+let createArray: CreateArrayFunc;
+createArray = function <T>(length: number, value: T): Array<T> {
+    let result: T[] = [];
+    for (let index = 0; index < length; index++) {
+        result[index] = value;
+    }
+    return result;
+}
+createArray(6, "Z");
+
+interface CreateArrayFunc1<T> {
+    (length: number, value: T): Array<T>;
+}
+```
+
+### 泛型05： 泛型类
+
+```ts
+class GenericNumber<T>{
+    zeroValue: T;
+    add: (x: T, y: T) => T;
+}
+let myGenericNumber = new GenericNumber<number>();
+myGenericNumber.zeroValue = 0;
+myGenericNumber.add = function (x, y) { return x + y; }
+```
+
+### 泛型参数的默认类型
+
+```ts
+function createArray<T = string>(length: number, value: T): Array<T> {
+    let result: T[] = [];
+    for (let index = 0; index < length; index++) {
+        result[index] = value;
+    }
+    return result;
+}
+```
+
+### 声明合并、同名函数、接口、类的合并
