@@ -147,3 +147,73 @@ PS: **零基础建议完整引入**
 ### 登录页面设计和表单验证
 
 导入资源文件至： `.\ZhaoXiProjects\Exercise003\code\zhaoxi.fullstack04phase.frontend\public`
+
+### 无限层级菜单和组件递归
+
+#### 递归组件
+
+```html
+<!-- 封装树状菜单 -->
+<script setup lang="ts">
+import TreeMenuModel from '../class/TreeMenuModel'; // 导入模型
+
+defineProps({
+    listTreeMenuModel: Array<TreeMenuModel>
+});
+</script>
+
+<template>
+    <!-- 单极菜单 -->
+    <el-menu-item :index="item.Index" v-for="item in listTreeMenuModel?.filter(x => x.Children.length == 0)">
+        <el-icon><icon-menu /></el-icon>
+        <span>{{ item.Name }}</span>
+    </el-menu-item>
+    <!-- 多级菜单 -->
+    <el-sub-menu :index="item.Index" v-for="item in listTreeMenuModel?.filter(x => x.Children.length > 0)">
+        <template #title>
+            <el-icon>
+                <location />
+            </el-icon>
+            <span>{{ item.Name }}</span>
+        </template>
+        <!-- 递归无限层级菜单(自己调用自己) -->
+        <!-- <el-menu-item :index="subitem.Index" v-for="subitem in item.Children.filter(x => x.Children.length == 0)">
+            <el-icon><icon-menu /></el-icon>
+            <span>{{ subitem.Name }}</span>
+        </el-menu-item> -->
+        <TreeMenu :listTreeMenuModel="item.Children"></TreeMenu>
+    </el-sub-menu>
+</template>
+```
+
+#### 通过 DIV 处理排序
+
+```html
+<template>
+    <!-- div 导致菜单折叠时变形 -->
+    <div v-for="item in listTreeMenuModel">
+        <!-- 单极菜单 -->
+        <el-menu-item :index="item.Index" v-if="item.Children.length == 0">
+            <el-icon><icon-menu /></el-icon>
+            <span>{{ item.Name }}</span>
+        </el-menu-item>
+        <!-- 多级菜单 -->
+        <el-sub-menu :index="item.Index" v-else>
+            <template #title>
+                <el-icon>
+                    <location />
+                </el-icon>
+                <span>{{ item.Name }}</span>
+            </template>
+            <!-- 递归无限层级菜单(自己调用自己) -->
+            <TreeMenu :listTreeMenuModel="item.Children"></TreeMenu>
+        </el-sub-menu>
+    </div>
+</template>
+```
+
+#### 安装图标
+
+`pnpm install @element-plus/icons-vue`
+
+#### 菜单中的 template & span

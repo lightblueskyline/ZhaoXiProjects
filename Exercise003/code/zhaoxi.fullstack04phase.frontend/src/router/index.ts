@@ -20,9 +20,9 @@ const router = createRouter({
         },
         // 嵌入
         {
-            name: "MainPage", // 作为首页
+            name: "RootPage", // 作为首页
             path: "/",
-            component: () => import("../views/index/MainPage.vue"),
+            component: () => import("../views/index/RootPage.vue"),
             // 嵌套其中的页面 -> children
             children: [
                 {
