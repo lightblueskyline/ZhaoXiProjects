@@ -139,3 +139,11 @@ app.use(router);
 app.use(ElementPlus);
 app.mount('#app');
 ```
+
+#### [按需导入](https://element-plus.org/zh-CN/guide/quickstart.html#%E6%8C%89%E9%9C%80%E5%AF%BC%E5%85%A5)
+
+PS: **零基础建议完整引入**
+
+### 登录页面设计和表单验证
+
+导入资源文件至： `.\ZhaoXiProjects\Exercise003\code\zhaoxi.fullstack04phase.frontend\public`

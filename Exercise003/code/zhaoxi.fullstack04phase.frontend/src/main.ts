@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import './style.css'
+import './assets/css/global.scss' // 导入自定义全局样式
 import App from './App.vue'
 import router from './router' // 导入路由
 import ElementPlus from "element-plus" // 全局导入 Element-Plus
