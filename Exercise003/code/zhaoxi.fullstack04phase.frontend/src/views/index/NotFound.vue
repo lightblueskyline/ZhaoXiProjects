@@ -2,9 +2,7 @@
 </script>
 
 <template>
-    <div>
-        Not Found
-    </div>
+    <el-empty description="页面 404" />
 </template>
 
 <style scoped></style>

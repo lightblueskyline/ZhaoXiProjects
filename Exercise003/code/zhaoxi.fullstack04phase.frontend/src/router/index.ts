@@ -15,7 +15,7 @@ const router = createRouter({
         },
         {
             name: "NotFound",
-            path: "/notfound",
+            path: "/:pathMatch(.*)",
             component: () => import("../views/index/NotFound.vue")
         },
         // 嵌入
@@ -26,9 +26,19 @@ const router = createRouter({
             // 嵌套其中的页面 -> children
             children: [
                 {
-                    name: "TestPage",
-                    path: "/testpage",
-                    component: () => import("../views/index/TestPage.vue"),
+                    name: "Menu",
+                    path: "/menu",
+                    component: () => import("../views/admin/menu/Menu.vue"),
+                },
+                {
+                    name: "Role",
+                    path: "/role",
+                    component: () => import("../views/admin/role/Role.vue"),
+                },
+                {
+                    name: "User",
+                    path: "/user",
+                    component: () => import("../views/admin/user/User.vue"),
                 }
             ]
         }

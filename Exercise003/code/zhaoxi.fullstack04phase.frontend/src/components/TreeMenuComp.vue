@@ -15,14 +15,14 @@ const item: TreeMenuModel = props.objTreeMenuModel as TreeMenuModel;
 </script>
 
 <template>
-    <!-- 单极菜单 -->
     <el-menu-item :index="item.Index" v-if="item.Children.length == 0">
         <el-icon>
             <Notebook />
         </el-icon>
-        <template #title>{{ item.Name }}</template>
+        <template #title>
+            <span>{{ item.Name }}</span>
+        </template>
     </el-menu-item>
-    <!-- 多级菜单 -->
     <el-sub-menu :index="item.Index" v-else>
         <template #title>
             <el-icon>
@@ -30,9 +30,7 @@ const item: TreeMenuModel = props.objTreeMenuModel as TreeMenuModel;
             </el-icon>
             <span>{{ item.Name }}</span>
         </template>
-        <!-- 递归无限层级菜单(自己调用自己) -->
-        <!-- <TreeMenu :listTreeMenuModel="item.Children"></TreeMenu> -->
-        <TreeMenu v-for="subItem in item.Children" :objTreeMenuModel="subItem" :key="subItem.Index"></TreeMenu>
+        <TreeMenuComp v-for="subItem in item.Children" :objTreeMenuModel="subItem" :key="subItem.Index"></TreeMenuComp>
     </el-sub-menu>
 </template>
 

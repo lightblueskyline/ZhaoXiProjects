@@ -1,99 +1,80 @@
+<template>
+    <!-- 主页：需要内嵌的页面，放在其中 -->
+    <div class="common-layout">
+        <el-container>
+            <el-aside style="width: inherit;">
+                <el-menu :collapse="isCollapse" router style="height: 100vh;" active-text-color="#ffd04b"
+                    background-color="#545c64" text-color="#fff" @select="handleSelect">
+                    <!-- 自定义组件 TreeMenuComp -->
+                    <!-- <TreeMenuComp :listTreeMenuModel="listTreeMenuModel"></TreeMenuComp> -->
+                    <TreeMenuComp v-for="item in listTreeMenuModel" :objTreeMenuModel="item" :key="item.Index">
+                    </TreeMenuComp>
+                </el-menu>
+            </el-aside>
+            <el-container>
+                <el-header>
+                    <HeaderComp></HeaderComp>
+                </el-header>
+                <el-main>
+                    <router-view></router-view>
+                </el-main>
+            </el-container>
+        </el-container>
+    </div>
+</template>
+
 <script setup lang="ts">
-import TreeMenu from "../../components/TreeMenu.vue"; // 导入自定义组件
+import TreeMenuComp from "../../components/TreeMenuComp.vue"; // 导入自定义组件
+// import IconComp from "../../components/IconComp.vue"; // 导入自定义组件
+import HeaderComp from "../../components/HeaderComp.vue"; // 导入自定义组件
 import TreeMenuModel from "../../class/TreeMenuModel"; // 导入模型
-import { ref } from "vue";
+import { computed } from "vue";
+import userStore from "../../store/index"; // 导入 pinia 全局状态管理
+import { handleSelect } from "../../tool/index";
 
 const listTreeMenuModel: Array<TreeMenuModel> = [
     {
-        Index: "/menu",
-        Name: "菜单管理",
-        Children: [
+        "Name": "菜单管理",
+        "Index": "/menu",
+        "FilePath": "",
+        "Children": [
             {
-                Index: "/submenu1",
-                Name: "菜单管理 1-1",
-                Children: []
-            },
-            {
-                Index: "/submenu2",
-                Name: "菜单管理 1-2",
-                Children: []
-            },
-            {
-                Index: "/submenu3",
-                Name: "菜单管理 1-3",
-                Children: [
-                    {
-                        Index: "/submenu31",
-                        Name: "菜单管理 1-3-1",
-                        Children: []
-                    },
-                    {
-                        Index: "/submenu32",
-                        Name: "菜单管理 1-3-2",
-                        Children: []
-                    },
-                    {
-                        Index: "/submenu33",
-                        Name: "菜单管理 1-3-3",
-                        Children: [
-                            {
-                                Index: "/submenu331",
-                                Name: "菜单管理 1-3-3-1",
-                                Children: []
-                            },
-                            {
-                                Index: "/submenu332",
-                                Name: "菜单管理 1-3-3-2",
-                                Children: []
-                            },
-                            {
-                                Index: "/submenu333",
-                                Name: "菜单管理 1-3-3-3",
-                                Children: []
-                            }
-                        ]
-                    }
-                ]
-            },
+                "Name": "菜单列表",
+                "Index": "/menu",
+                "Children": [],
+                "FilePath": "menu.vue"
+            }
         ]
     },
     {
-        Index: "/role",
-        Name: "角色管理",
-        Children: []
+        "Name": "角色管理",
+        "Index": "/role",
+        "FilePath": "",
+        "Children": [
+            {
+                "Name": "角色列表",
+                "Index": "/role",
+                "Children": [],
+                "FilePath": "role.vue"
+            }
+        ]
     },
     {
-        Index: "/user",
-        Name: "用户管理",
-        Children: []
+        "Name": "用户管理",
+        "Index": "/user",
+        "FilePath": "",
+        "Children": [
+            {
+                "Name": "用户列表",
+                "Index": "/user",
+                "Children": [],
+                "FilePath": "user.vue"
+            }
+        ]
     }
 ];
 //
-const isCollapse = ref(false);
+const isCollapse = computed(() => {
+    userStore().isCollapse
+}); // 计算属性
 </script>
-
-<template>
-    <!-- 主页：需要内嵌的页面，放在其中 -->
-    <el-container>
-        <el-aside style="width: inherit;">
-            <el-menu :collapse="isCollapse" router style="height: 100vh;" active-text-color="#ffd04b"
-                background-color="#545c64" text-color="#fff">
-                <!-- 自定义组件 TreeMenu -->
-                <!-- <TreeMenu :listTreeMenuModel="listTreeMenuModel"></TreeMenu> -->
-                <TreeMenu v-for="item in listTreeMenuModel" :objTreeMenuModel="item" :key="item.Index"></TreeMenu>
-            </el-menu>
-        </el-aside>
-        <el-container>
-            <el-header>
-                <!-- 折叠菜单 -->
-                <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
-                    <el-radio-button :label="false">expand</el-radio-button>
-                    <el-radio-button :label="true">collapse</el-radio-button>
-                </el-radio-group>
-            </el-header>
-            <el-main>
-                <router-view></router-view>
-            </el-main>
-        </el-container>
-    </el-container>
-</template>

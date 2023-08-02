@@ -217,3 +217,58 @@ defineProps({
 `pnpm install @element-plus/icons-vue`
 
 #### 菜单中的 template & span
+
+### 折叠图标
+
+```html
+<el-header>
+    <!-- 折叠菜单 -->
+    <!-- <el-radio-group v-model="isCollapse" style="margin-bottom: 20px">
+        <el-radio-button :label="false">expand</el-radio-button>
+        <el-radio-button :label="true">collapse</el-radio-button>
+    </el-radio-group> -->
+    <!-- 折叠菜单 使用图标 -->
+    <!-- <el-icon>
+        <Expand />
+    </el-icon> -->
+    <!-- 折叠菜单 使用自定义图标组件 -->
+    <IconComp IconName="Expand"></IconComp>
+</el-header>
+```
+
+### 全局状态管理(pinia)以及持久化方案
+
+安装： `pnpm install pinia`  
+使用：
+
+```ts
+// src\main.ts
+import { createPinia } from "pinia"; // 全局导入 pinia
+
+app.use(createPinia());
+```
+
+```ts
+// src\store\index.ts
+// pinia 全局状态管理
+import { defineStore } from "pinia";
+
+const userStore = defineStore("main", {
+    state: () => {
+        return {
+            isCollapse: false // 菜单默认打开
+        }
+    }
+});
+
+// 导出
+export default userStore;
+```
+
+pinia 持久化插件： `pnpm install pinia-plugin-persist`
+
+```ts
+import piniaPluginPersist from "pinia-plugin-persist"; // 导入 pinia 持久化插件
+
+app.use(createPinia().use(piniaPluginPersist));
+```
