@@ -277,3 +277,15 @@ app.use(createPinia().use(piniaPluginPersist));
 
 国际化引入报错，处理方式： `src\vite-env.d.ts` 添加  
 `declare module 'element-plus/dist/locale/zh-cn.mjs';`
+
+## 后端项目创建、配置、编码
+
+后端解决方案解构
+
+- ExecWebAPI (暴露的 API)
+- Model
+  - 数据库实体
+  - DTO (数据传输对象)
+  - 公共模型
+- Interface (接口层)
+- Service (实现层)
