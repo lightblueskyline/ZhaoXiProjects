@@ -20,11 +20,21 @@ const router = createRouter({
         },
         // 嵌入
         {
-            name: "RootPage", // 作为首页
+            name: "RootPage", // 登入后母页面
             path: "/",
             component: () => import("../views/index/RootPage.vue"),
             // 嵌套其中的页面 -> children
             children: [
+                {
+                    name: "Desktop",
+                    path: "/desktop",
+                    component: () => import("../views/index/Desktop.vue"),
+                },
+                {
+                    name: "Person",
+                    path: "/personpage",
+                    component: () => import("../views/index/PersonPage.vue"),
+                },
                 {
                     name: "Menu",
                     path: "/menu",

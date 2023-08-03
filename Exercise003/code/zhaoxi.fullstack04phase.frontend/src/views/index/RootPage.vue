@@ -4,9 +4,24 @@
         <el-container>
             <el-aside style="width: inherit;">
                 <el-menu :collapse="isCollapse" router style="height: 100vh;" active-text-color="#ffd04b"
-                    background-color="#545c64" text-color="#fff" @select="handleSelect">
-                    <!-- 自定义组件 TreeMenuComp -->
-                    <!-- <TreeMenuComp :listTreeMenuModel="listTreeMenuModel"></TreeMenuComp> -->
+                    background-color="#545c64" text-color="#fff" @select="handleSelect"
+                    :default-active="router.currentRoute.value.path" :unique-opened="true">
+                    <el-sub-menu index="/desktop">
+                        <template #title>
+                            <IconComp iconname="House"></IconComp>
+                            <span>主页</span>
+                        </template>
+                        <el-menu-item index="/desktop">
+                            <IconComp iconname="Monitor"></IconComp>
+                            <span>工作台</span>
+                        </el-menu-item>
+                        <el-menu-item index="/personpage">
+                            <el-icon>
+                                <ElementPlus />
+                            </el-icon>
+                            <span>个人中心</span>
+                        </el-menu-item>
+                    </el-sub-menu>
                     <TreeMenuComp v-for="item in listTreeMenuModel" :objTreeMenuModel="item" :key="item.Index">
                     </TreeMenuComp>
                 </el-menu>
@@ -25,12 +40,13 @@
 
 <script setup lang="ts">
 import TreeMenuComp from "../../components/TreeMenuComp.vue"; // 导入自定义组件
-// import IconComp from "../../components/IconComp.vue"; // 导入自定义组件
 import HeaderComp from "../../components/HeaderComp.vue"; // 导入自定义组件
 import TreeMenuModel from "../../class/TreeMenuModel"; // 导入模型
 import { computed } from "vue";
 import userStore from "../../store/index"; // 导入 pinia 全局状态管理
 import { handleSelect } from "../../tool/index";
+import router from "../../router/index"; // 导入路由
+import IconComp from "../../components/IconComp.vue";
 
 const listTreeMenuModel: Array<TreeMenuModel> = [
     {

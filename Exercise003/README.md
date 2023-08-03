@@ -42,11 +42,11 @@ export default defineConfig({
 })
 ```
 
-### 安装和配置路由
+## 安装和配置路由
 
 `pnpm install vue-router@4`  
 
-#### 新建路由文件夹和配置
+### 新建路由文件夹和配置
 
 ```ts
 // src\router\index.ts
@@ -76,7 +76,7 @@ const router = createRouter({
 export default router;
 ```
 
-#### 全局引入路由
+### 全局引入路由
 
 ```ts
 // src\main.ts
@@ -91,7 +91,7 @@ app.use(router);
 app.mount('#app');
 ```
 
-#### App.vue 添加路由标签
+### App.vue 添加路由标签
 
 ```html
 <script setup lang="ts">
@@ -104,7 +104,7 @@ app.mount('#app');
 <style scoped></style>
 ```
 
-### 安装 sass (选装)
+## 安装 sass (选装)
 
 `pnpm install sass` 方便书写层叠样式
 
@@ -118,7 +118,7 @@ div {
 </style>
 ```
 
-### Element-Plus 组件库
+## Element-Plus 组件库
 
 ### 安装以及导入 Element-Plus
 
@@ -140,7 +140,7 @@ app.use(ElementPlus);
 app.mount('#app');
 ```
 
-#### [按需导入](https://element-plus.org/zh-CN/guide/quickstart.html#%E6%8C%89%E9%9C%80%E5%AF%BC%E5%85%A5)
+### [按需导入](https://element-plus.org/zh-CN/guide/quickstart.html#%E6%8C%89%E9%9C%80%E5%AF%BC%E5%85%A5)
 
 PS: **零基础建议完整引入**
 
@@ -148,9 +148,9 @@ PS: **零基础建议完整引入**
 
 导入资源文件至： `.\ZhaoXiProjects\Exercise003\code\zhaoxi.fullstack04phase.frontend\public`
 
-### 无限层级菜单和组件递归
+## 无限层级菜单和组件递归
 
-#### 递归组件
+### 递归组件
 
 ```html
 <!-- 封装树状菜单 -->
@@ -186,7 +186,7 @@ defineProps({
 </template>
 ```
 
-#### 通过 DIV 处理排序
+## 通过 DIV 处理排序
 
 ```html
 <template>
@@ -212,13 +212,13 @@ defineProps({
 </template>
 ```
 
-#### 安装图标
+## 安装图标
 
 `pnpm install @element-plus/icons-vue`
 
-#### 菜单中的 template & span
+## 菜单中的 template & span
 
-### 折叠图标
+## 折叠图标
 
 ```html
 <el-header>
@@ -236,7 +236,7 @@ defineProps({
 </el-header>
 ```
 
-### 全局状态管理(pinia)以及持久化方案
+## 全局状态管理(pinia)以及持久化方案
 
 安装： `pnpm install pinia`  
 使用：
@@ -272,3 +272,8 @@ import piniaPluginPersist from "pinia-plugin-persist"; // 导入 pinia 持久化
 
 app.use(createPinia().use(piniaPluginPersist));
 ```
+
+## 工作台
+
+国际化引入报错，处理方式： `src\vite-env.d.ts` 添加  
+`declare module 'element-plus/dist/locale/zh-cn.mjs';`

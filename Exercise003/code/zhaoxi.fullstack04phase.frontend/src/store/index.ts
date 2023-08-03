@@ -10,7 +10,7 @@ const userStore = defineStore("storeUser", {
         }
     },
     persist: {
-        // 状态管理
+        // 状态管理 & 持久化
         enabled: true, // 开启
         strategies: [
             {
