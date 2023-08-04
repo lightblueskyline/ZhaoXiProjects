@@ -289,3 +289,6 @@ app.use(createPinia().use(piniaPluginPersist));
   - 公共模型
 - Interface (接口层)
 - Service (实现层)
+
+项目(ExecWebAPI, Model)安装包： `SqlSugarCore`  
+项目(ExecWebAPI)安装包： `Autofac, Autofac.Extensions.DependencyInjection, AutoMapper, AutoMapper.Extensions.Microsoft.DependencyInjection`
