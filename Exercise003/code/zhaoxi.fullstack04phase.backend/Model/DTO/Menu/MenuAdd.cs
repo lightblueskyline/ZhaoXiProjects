@@ -8,7 +8,7 @@
 
         public string FilePath { get; set; }
 
-        public long ParentId { get; set; }
+        public string ParentId { get; set; }
 
         public int Order { get; set; }
 

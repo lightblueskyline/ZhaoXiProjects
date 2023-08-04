@@ -3,6 +3,7 @@ using SqlSugar;
 
 namespace Model.Entity
 {
+    [SugarTable(TableName = "MenuRoleRelation")]
     public class MenuRoleRelation : IBase
     {
         /// <summary>

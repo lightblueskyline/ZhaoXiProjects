@@ -14,7 +14,7 @@ namespace Model.Common
         /// 创建人 ID
         /// </summary>
         [SugarColumn(IsNullable = false)]
-        public long CreateUserId { get; set; }
+        public string CreateUserId { get; set; }
 
         /// <summary>
         /// 创建日期
@@ -26,7 +26,7 @@ namespace Model.Common
         /// 修改人 ID
         /// </summary>
         [SugarColumn(IsNullable = true)]
-        public long ModifyUserId { get; set; }
+        public string ModifyUserId { get; set; }
 
         /// <summary>
         /// 修改日期
@@ -38,6 +38,6 @@ namespace Model.Common
         /// 是否删除
         /// </summary>
         [SugarColumn(IsNullable = false)]
-        public int IsDeleted { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

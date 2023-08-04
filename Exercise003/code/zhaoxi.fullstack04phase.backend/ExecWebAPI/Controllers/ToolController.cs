@@ -50,6 +50,7 @@ namespace ExecWebAPI.Controllers
             #region 3. 添加测试数据(初始化超级管理员和菜单)
             Users users = new Users()
             {
+                Id = Guid.NewGuid().ToString(),
                 Name = "Admin",
                 NickName = "超级管理员",
                 Password = "123456",
@@ -57,17 +58,18 @@ namespace ExecWebAPI.Controllers
                 IsEnable = true,
                 Description = "数据库初始化时默认添加的超级管理员",
                 CreateDate = DateTime.Now,
-                CreateUserId = 0,
+                CreateUserId = "",
             };
             // 取得 UserId
-            long userId = await _dbClient.Insertable<Users>(users).ExecuteReturnBigIdentityAsync();
+            string userId = (await _dbClient.Insertable<Users>(users).ExecuteReturnEntityAsync()).Id;
             //
             Menu menu1 = new Menu()
             {
+                Id = Guid.NewGuid().ToString(),
                 Name = "菜单管理",
                 Index = "/menu",
                 FilePath = "Menu.vue",
-                ParentId = 0,
+                ParentId = "",
                 Order = 1,
                 IsEnable = true,
                 Icon = "Folder",
@@ -75,10 +77,11 @@ namespace ExecWebAPI.Controllers
                 CreateDate = DateTime.Now,
                 CreateUserId = userId
             };
-            long menu1Id = await _dbClient.Insertable<Menu>(menu1).ExecuteReturnBigIdentityAsync();
+            string menu1Id = (await _dbClient.Insertable<Menu>(menu1).ExecuteReturnEntityAsync()).Id;
             //
             Menu menu2 = new Menu()
             {
+                Id = Guid.NewGuid().ToString(),
                 Name = "菜单列表",
                 Index = "/menu",
                 FilePath = "Menu.vue",

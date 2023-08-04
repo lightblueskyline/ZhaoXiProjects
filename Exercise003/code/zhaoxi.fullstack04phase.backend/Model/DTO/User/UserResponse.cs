@@ -5,7 +5,7 @@
         /// <summary>
         /// 主键
         /// </summary>
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// 用户名
@@ -60,7 +60,7 @@
         /// <summary>
         /// 是否删除
         /// </summary>
-        public int IsDeleted { get; set; }
+        public bool IsDeleted { get; set; }
 
         /// <summary>
         /// 描述

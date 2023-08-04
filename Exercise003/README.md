@@ -291,4 +291,5 @@ app.use(createPinia().use(piniaPluginPersist));
 - Service (实现层)
 
 项目(ExecWebAPI, Model)安装包： `SqlSugarCore`  
-项目(ExecWebAPI)安装包： `Autofac, Autofac.Extensions.DependencyInjection, AutoMapper, AutoMapper.Extensions.Microsoft.DependencyInjection`
+项目(ExecWebAPI)安装包： `Autofac, Autofac.Extensions.DependencyInjection, AutoMapper, AutoMapper.Extensions.Microsoft.DependencyInjection`  
+项目(Service)安装包： `Microsoft.AspNetCore.Authentication.JwtBearer, Microsoft.IdentityModel.Tokens, System.IdentityModel.Tokens.Jwt`

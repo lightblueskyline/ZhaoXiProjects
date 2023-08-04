@@ -6,6 +6,7 @@ namespace Model.Entity
     /// <summary>
     /// 菜单表
     /// </summary>
+    [SugarTable(TableName = "Menu")]
     public class Menu : IEntity
     {
         /// <summary>
@@ -30,7 +31,7 @@ namespace Model.Entity
         /// 父级
         /// </summary>
         [SugarColumn(IsNullable = false)]
-        public long ParentId { get; set; }
+        public string ParentId { get; set; }
 
         /// <summary>
         /// 排序

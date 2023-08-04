@@ -6,8 +6,10 @@ namespace Model.Common
     {
         /// <summary>
         /// 主键
+        /// 使用 GUID 类型修改为 String
         /// </summary>
-        [SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
-        public long Id { get; set; }
+        //[SugarColumn(IsPrimaryKey = true, IsIdentity = true)]
+        [SugarColumn(IsPrimaryKey = true)]
+        public string Id { get; set; }
     }
 }

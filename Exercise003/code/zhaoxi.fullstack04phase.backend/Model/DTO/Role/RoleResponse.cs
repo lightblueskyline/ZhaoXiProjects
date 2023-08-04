@@ -2,7 +2,7 @@
 {
     public class RoleResponse
     {
-        public long Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// 名称
@@ -47,6 +47,6 @@
         /// <summary>
         /// 是否删除
         /// </summary> 
-        public int IsDeleted { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }
