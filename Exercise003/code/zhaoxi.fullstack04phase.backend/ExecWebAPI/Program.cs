@@ -3,7 +3,9 @@ using Autofac.Extensions.DependencyInjection;
 using ExecWebAPI.Config;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Model.Other;
+using Newtonsoft.Json.Serialization;
 using SqlSugar;
 using System.Text;
 
@@ -11,10 +13,45 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+// builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+#region Swagger 配置
+builder.Services.AddSwaggerGen(options =>
+{
+    // 设置标题和版本
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "zhaoxi.fullstack04phase.backend", Version = "v1" });
+    // 设置参数默认值
+    options.ParameterFilter<DefaultValueParameterFilter>();
+    // 设置对象类型参数默认值
+    options.SchemaFilter<DefaultSchemaParameterFilter>();
+    // 添加安全定义
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
+    {
+        Description = "请输入 Token 格式为： Bearer XXXXXX(注意中间必需有空格)",
+        Name = "Authorization",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    // 添加安全要求
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme()
+            {
+                Reference = new OpenApiReference()
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },Array.Empty<string>()
+        }
+    });
+});
+#endregion
 
 #region 替换内置 IOC
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -82,6 +119,22 @@ builder.Services.Configure<JwtTokenOption>(builder.Configuration.GetSection("Jwt
 }
 #endregion
 
+#region JSON 格式化
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        // 指定如何解决循环引用
+        // 1. Ignore 将忽略循环引用
+        // 2. Serialize 将序列化循环应用
+        // 3. Error 将抛出异常
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+        // 统一设置 API 日期格式
+        options.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+        // 统一设置 JSON 内实体的格式(默认 JSON 里的首字母为小写，这里改为同后端 Model 一致)
+        options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+    });
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -91,8 +144,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseAuthorization();
-app.UseAuthorization();
+app.UseAuthentication(); // 鉴权
+app.UseAuthorization(); // 授权
 
 app.MapControllers();
 
