@@ -5,6 +5,8 @@ import { ref, reactive } from "vue";
 // FormRules 表单验证规则
 import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 import { useRouter } from "vue-router"; // 导入路由
+import { GetToken } from "../../http/index";
+import userStore from "../../store/index";
 
 const router = useRouter();
 
@@ -12,7 +14,7 @@ const url = ref("/images/logo.0606fdd2.png");
 const boxbg = ref("/images/svgs/login-box-bg.svg");
 
 const form = reactive({
-    userName: "",
+    userName: "Admin",
     passWord: ""
 });
 
@@ -29,12 +31,24 @@ const onSubmit = async (ruleFormRef: FormInstance | undefined) => {
     await ruleFormRef.validate(async (valid, fields) => {
         console.log(fields);
         if (valid) {
-            // 验证通过
-            ElMessage.success("验证通过！");
-            // 跳转路由
-            router.push({
-                path: "/"
-            });
+            // 请求登录接口
+            let tempResponse = await GetToken(form) as any;
+            if (tempResponse.status === 200) { // 请求成功
+                if (tempResponse.data.IsSuccess) { // 合法用户
+                    let tempToken: string = tempResponse.data.Result as string;
+                    console.log(tempToken);
+                    // 更新全局状态管理中的 Token
+                    userStore().$patch({
+                        token: tempToken
+                    });
+                    // 验证通过
+                    ElMessage.success("验证通过，登录成功！");
+                    // 跳转路由
+                    router.push({
+                        path: "/"
+                    });
+                }
+            }
         } else {
             ElMessage.error("验证失败！");
         }

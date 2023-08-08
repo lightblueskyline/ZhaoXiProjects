@@ -1,12 +1,15 @@
 // pinia 全局状态管理
 import { defineStore } from "pinia";
 import TagModel from "../class/TagModel";
+import TreeMenuModel from "../class/TreeMenuModel";
 
 const userStore = defineStore("storeUser", {
     state: () => {
         return {
             isCollapse: false, // 菜单默认打开
             tags: [] as TagModel[],
+            token: "",
+            UserMenus: [] as TreeMenuModel
         }
     },
     persist: {

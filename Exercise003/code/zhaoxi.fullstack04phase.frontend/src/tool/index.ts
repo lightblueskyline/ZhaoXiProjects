@@ -1,5 +1,7 @@
 // 公共方法
 import TagModel from "../class/TagModel";
+import TreeMenuModel from "../class/TreeMenuModel";
+import { GetToken } from "../http";
 import router from "../router/index";
 import userStore from "../store/index";
 
@@ -43,4 +45,31 @@ export const tagClick = (index: string) => {
     router.push({
         path: index
     });
+}
+
+// 设置用户动态路由，更新全局状态
+export const SettingUserDynamicRouter = async () => {
+    // 读取所有节点下的文件
+    const nodeFiles = import.meta.glob(["../views/*/*.vue", "../views/*/*/*.vue", "../views/*/*/*.vue"]);
+    console.log(nodeFiles);
+    let localFiles: any[] = [];
+    for (var item in nodeFiles) {
+        localFiles.push({ filepath: item, component: nodeFiles[item] });
+    }
+    console.log(localFiles);
+    // // 动态路由添加
+    // localFiles.forEach(x => {
+    //     router.addRoute("admin", {
+    //         name: "",
+    //         path: "",
+    //         component: x.component
+    //     });
+    // });
+    const obj={
+        Name:"",
+        Index:"",
+        FilePath:"",
+        ParentId:"",
+        Description:""
+    };
 }

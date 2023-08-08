@@ -301,3 +301,37 @@ app.use(createPinia().use(piniaPluginPersist));
 
 基本策略抽象类、两种策略实现类、文件上传服务接口、文件上传服务类、文件上传上下文类(通过此类调用具体策略，已上传头像图片)、上传类型枚举类、文件上传工厂类(创建策略实体)  
 **PS:** 若要通过浏览器浏览图片，需要配置静态文件中间件
+
+## Axios 请求 WebAPI
+
+安装： `pnpm install axios`  
+处理跨域问题：
+
+```ts
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [vue()],
+  server: {
+    open: false, // 打开浏览器
+    host: "127.0.0.1", // 设置主机
+    // port: 5001, // 设置端口
+    proxy: {
+      "/api": {
+        // 转发地址
+        target: "http://localhost:5271/api",
+        // 启用跨域访问
+        changeOrigin: true,
+        // 修改请求路径
+        rewrite: path => path.replace(/^\/api/, "")
+      }
+    }
+  }
+});
+```
+
+## Vite 动态路由
+
+`const nodeFiles = import.meta.glob(["../views/*/*.vue", "../views/*/*/*.vue", "../views/*/*/*.vue"]);`

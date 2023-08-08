@@ -1,5 +1,6 @@
 // 路由
 import { createRouter, createWebHistory } from "vue-router";
+import { SettingUserDynamicRouter } from "../tool/index";
 
 // 创建路由对象
 const router = createRouter({
@@ -35,24 +36,35 @@ const router = createRouter({
                     path: "/personpage",
                     component: () => import("../views/index/PersonPage.vue"),
                 },
-                {
-                    name: "Menu",
-                    path: "/menu",
-                    component: () => import("../views/admin/menu/Menu.vue"),
-                },
-                {
-                    name: "Role",
-                    path: "/role",
-                    component: () => import("../views/admin/role/Role.vue"),
-                },
-                {
-                    name: "User",
-                    path: "/user",
-                    component: () => import("../views/admin/user/User.vue"),
-                }
+                // {
+                //     name: "Menu",
+                //     path: "/menu",
+                //     component: () => import("../views/admin/menu/Menu.vue"),
+                // },
+                // {
+                //     name: "Role",
+                //     path: "/role",
+                //     component: () => import("../views/admin/role/Role.vue"),
+                // },
+                // {
+                //     name: "User",
+                //     path: "/user",
+                //     component: () => import("../views/admin/user/User.vue"),
+                // }
             ]
         }
     ]
+});
+
+// 路由导航(到某页面之前的拦截)
+// 当路由存在则跳转，不存在 404
+router.beforeEach(async (to, from, next) => {
+    // 未登陆时，没有权限，无需读取路由
+    if (to.path != "/login") {
+        // 读取并设置动态路由
+        SettingUserDynamicRouter();
+    }
+    next();
 });
 
 // 导出变量
