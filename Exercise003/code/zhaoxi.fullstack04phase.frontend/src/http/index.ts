@@ -7,7 +7,7 @@ import { ElMessage } from "element-plus";
 
 // 创建实例
 const instance = axios.create({
-    timeout: 3000,
+    timeout: 6000,
     headers: {
         "Content-Type": "application/json",
         // 这里无法使用 pinia
@@ -66,4 +66,6 @@ export const GetToken = (obj: {}) => {
     return axios.post(`/api/Login/GetToken`, obj);
 };
 
-// export const GetMenus = () => { };
+export const GetMenus = (obj: {}) => {
+    return instance.post(`/api/Menu/GetMenus`, obj);
+};

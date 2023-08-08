@@ -8,5 +8,6 @@ namespace ExecWebAPI.Controllers
     [Authorize]
     public class ABaseController : ControllerBase
     {
+        public string userId { get; set; }
     }
 }

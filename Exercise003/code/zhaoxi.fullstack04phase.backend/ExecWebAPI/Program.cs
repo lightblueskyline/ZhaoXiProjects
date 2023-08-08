@@ -64,12 +64,28 @@ builder.Host.ConfigureContainer<ContainerBuilder>(container =>
     #region 注册 SqlSugar
     container.Register<ISqlSugarClient>(context =>
     {
+        #region MySQL
+        //SqlSugarClient dbClient = new SqlSugarClient(new ConnectionConfig()
+        //{
+        //    DbType = DbType.MySql,
+        //    ConnectionString = builder.Configuration.GetConnectionString("ZhaoXiExercise003"),
+        //    IsAutoCloseConnection = true
+        //});
+        #endregion
+
+        #region SQLite
+        if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "TempDB")))
+        {
+            Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "TempDB"));
+        }
+        string dbPath = Path.Combine(AppContext.BaseDirectory, "TempDB");
         SqlSugarClient dbClient = new SqlSugarClient(new ConnectionConfig()
         {
-            DbType = DbType.MySql,
-            ConnectionString = builder.Configuration.GetConnectionString("ZhaoXiExercise003"),
+            DbType = DbType.Sqlite,
+            ConnectionString = @$"DataSource={dbPath}\ZhaoXiExercise003.sqlite",
             IsAutoCloseConnection = true
         });
+        #endregion
 
         // 支持 SQL 语句输出，方便排除错误
         dbClient.Aop.OnLogExecuting = (sql, param) =>
@@ -121,8 +137,7 @@ builder.Services.Configure<JwtTokenOption>(builder.Configuration.GetSection("Jwt
 #endregion
 
 #region JSON 格式化
-builder.Services.AddControllers()
-    .AddNewtonsoftJson(options =>
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
     {
         // 指定如何解决循环引用
         // 1. Ignore 将忽略循环引用
@@ -146,6 +161,10 @@ if (app.Environment.IsDevelopment())
 }
 
 #region 使用静态文件中间件，开启静态文件服务
+if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "wwwroot/FaceImages")))
+{
+    Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "wwwroot/FaceImages"));
+}
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(AppContext.BaseDirectory, "wwwroot/FaceImages")),

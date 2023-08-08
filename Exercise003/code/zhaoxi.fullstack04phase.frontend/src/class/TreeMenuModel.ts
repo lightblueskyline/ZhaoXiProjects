@@ -1,4 +1,5 @@
 export default interface TreeMenuModel {
+    Id: string
     // 菜单路由地址
     Index: string
     // 菜单名称

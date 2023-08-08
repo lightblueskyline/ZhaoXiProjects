@@ -46,7 +46,7 @@ namespace Service
                     issuer: _JwtTokenOption.Issuer,
                     audience: _JwtTokenOption.Audience,
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(5), // Token 有效期
+                    expires: DateTime.Now.AddMinutes(10), // Token 有效期
                     notBefore: null,
                     signingCredentials: credentials);
 

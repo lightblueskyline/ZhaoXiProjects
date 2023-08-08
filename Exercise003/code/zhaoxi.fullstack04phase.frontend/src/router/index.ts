@@ -61,8 +61,9 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     // 未登陆时，没有权限，无需读取路由
     if (to.path != "/login") {
+        console.log(from);
         // 读取并设置动态路由
-        SettingUserDynamicRouter();
+        await SettingUserDynamicRouter();
     }
     next();
 });
