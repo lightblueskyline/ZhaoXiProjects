@@ -292,4 +292,12 @@ app.use(createPinia().use(piniaPluginPersist));
 
 项目(ExecWebAPI, Model)安装包： `SqlSugarCore`  
 项目(ExecWebAPI)安装包： `Autofac, Autofac.Extensions.DependencyInjection, AutoMapper, AutoMapper.Extensions.Microsoft.DependencyInjection, Microsoft.AspNetCore.Mvc.NewtonsoftJson`  
-项目(Service)安装包： `Microsoft.AspNetCore.Authentication.JwtBearer, Microsoft.IdentityModel.Tokens, System.IdentityModel.Tokens.Jwt, AutoMapper`
+项目(Service)安装包： `Microsoft.AspNetCore.Authentication.JwtBearer, Microsoft.IdentityModel.Tokens, System.IdentityModel.Tokens.Jwt, AutoMapper`  
+项目(Interface)安装包： `Microsoft.AspNetCore.Http.Features`
+
+## 文件上传
+
+## 头像图片上传策略模式
+
+基本策略抽象类、两种策略实现类、文件上传服务接口、文件上传服务类、文件上传上下文类(通过此类调用具体策略，已上传头像图片)、上传类型枚举类、文件上传工厂类(创建策略实体)  
+**PS:** 若要通过浏览器浏览图片，需要配置静态文件中间件

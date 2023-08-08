@@ -2,6 +2,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using ExecWebAPI.Config;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Model.Other;
@@ -143,6 +144,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+#region 使用静态文件中间件，开启静态文件服务
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(AppContext.BaseDirectory, "wwwroot/FaceImages")),
+    RequestPath = "/faceimages" // 同物理路径的映射关系
+});
+#endregion
 
 app.UseAuthentication(); // 鉴权
 app.UseAuthorization(); // 授权
