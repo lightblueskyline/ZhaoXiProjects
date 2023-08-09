@@ -46,6 +46,11 @@ namespace ExecWebAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// 刷新 Token
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<ApiResult> RefreshToken(string userId)
         {

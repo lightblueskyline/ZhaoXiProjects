@@ -4,6 +4,7 @@ import userStore from "../store/index";
 import ApiResult from "../class/ApiResult";
 import router from "../router/index";
 import { ElMessage } from "element-plus";
+import { FormatToken } from "../tool";
 
 // 创建实例
 const instance = axios.create({
@@ -36,7 +37,7 @@ instance.interceptors.response.use(
         return tempResponse.Result;
     },
     // 请求异常走这里
-    error => {
+    async error => {
         // 请求的配置对象
         const originalRequest = error.config;
         // undefined
@@ -44,7 +45,27 @@ instance.interceptors.response.use(
             return Promise.reject(error);
         }
         // 根据不同的状态码，做出不同的响应
-        if (error.response.status === 401) {
+        // _retry 表示是否应该重试
+        if (error.response.status === 401 && !originalRequest._retry &&
+            userStore().RefreshTokenCount < 3 &&
+            userStore().token && userStore().token != "") {
+            // 无感刷新机制
+            // 每次重试时设置为 True
+            originalRequest._retry = true;
+            // 请求刷新 Token
+            const newToken = (await RefreshToken(FormatToken(userStore().token)?.Id!)).data.Result as string;
+            if (newToken) {
+                // 拿到 Token 之后更新全局状态，设置下次请求的 Token 返回实例
+                let tempNum = userStore().RefreshTokenCount + 1;
+                userStore().$patch({
+                    token: newToken,
+                    RefreshTokenCount: tempNum
+                });
+                // 更新请求头部
+                instance.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
+                return instance(originalRequest);
+            }
+        } else if (error.response.status === 401) {
             // 401 表示未授权 -> 登录页
             router.push({
                 path: "/login"
@@ -61,11 +82,91 @@ instance.interceptors.response.use(
     }
 );
 
+/**
+ * 获取 Token
+ * @param obj 
+ * @returns 
+ */
 export const GetToken = (obj: {}) => {
     // return axios.post("http://localhost:5271/api/Login/GetToken");
     return axios.post(`/api/Login/GetToken`, obj);
 };
 
+/**
+ * 刷新 Token
+ * @param userId 用户ID
+ * @returns 
+ */
+export const RefreshToken = (userId: string) => {
+    return axios.get(`/api/Login/RefreshToken?userId=${userId}`);
+};
+
+// ------ 菜单模块 START ------
+export const AddMenu = (obj: {}) => {
+    return instance.post(`/api/Menu/AddMenu`, obj);
+};
+
+export const BatchDeleteMenu = (ids: string) => {
+    return instance.get(`/api/Menu/BatchDeleteMenu?ids=${ids}`);
+};
+
+export const DeleteMenu = (id: string) => {
+    return instance.get(`/api/Menu/DeleteMenu?id=${id}`);
+};
+
+export const EditMenu = (obj: {}) => {
+    return instance.post(`/api/Menu/EditMenu`, obj);
+};
+
 export const GetMenus = (obj: {}) => {
     return instance.post(`/api/Menu/GetMenus`, obj);
 };
+
+export const SettingMenu = (roleId: string, menuIds: string) => {
+    return instance.get(`/api/Menu/SettingMenu?roleId=${roleId}&menuIds${menuIds}`);
+};
+// ------ 菜单模块 END ------
+
+// ------ 角色模块 START ------
+export const AddRole = (obj: {}) => {
+    return instance.post(`/api/Role/AddRole`, obj);
+};
+
+export const DeleteRole = (id: string) => {
+    return instance.get(`/api/Role/DeleteRole?id=${id}`);
+};
+
+export const EditRole = (obj: {}) => {
+    return instance.post(`/api/Role/EditRole`, obj);
+};
+
+export const GetRoles = (obj: {}) => {
+    return instance.post(`/api/Role/GetRoles`, obj);
+};
+// ------ 角色模块 END ------
+
+// ------ 用户模块 START ------
+export const AddUser = (obj: {}) => {
+    return instance.post(`/api/User/AddUser`, obj);
+};
+
+export const DeleteUser = (id: string) => {
+    return instance.get(`/api/User/DeleteUser?id=${id}`);
+};
+
+export const EditNickNameOrPassword = (obj: {}) => {
+    return instance.post(`/api/User/EditNickNameOrPassword`, obj);
+};
+
+export const EditUser = (obj: {}) => {
+    return instance.post(`/api/User/EditUser`, obj);
+};
+
+export const GetUsers = (obj: {}) => {
+    return instance.post(`/api/User/GetUsers`, obj);
+};
+
+export const SettingUserRole = (userId: string, roleIds: string) => {
+    return instance.get(`/api/User/SettingUserRole?userId=${userId}&roleIds=${roleIds}`);
+};
+// ------ 用户模块 END ------

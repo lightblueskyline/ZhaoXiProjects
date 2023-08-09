@@ -1,7 +1,8 @@
 // 路由
 import { createRouter, createWebHistory } from "vue-router";
-import { SettingUserDynamicRouter } from "../tool/index";
+import { SettingUserDynamicRouter, FormatToken, ValidTokenExpire } from "../tool/index";
 import userStore from "../store/index";
+import { ElMessage } from "element-plus";
 
 // 创建路由对象
 const router = createRouter({
@@ -60,6 +61,21 @@ const router = createRouter({
 // 路由导航(到某页面之前的拦截)
 // 当路由存在则跳转，不存在 404
 router.beforeEach(async (to, from, next) => {
+    // 未登录时，重定向至登录页
+    if (!userStore().token || userStore().token == "") {
+        if (to.path != "/login") {
+            next("/login");
+        }
+    } else {
+        // 判断登录有效期，并且避免重定向次数过多
+        console.log(FormatToken(userStore().token)?.exp);
+        let expire = FormatToken(userStore().token)?.exp as number;
+        if (!ValidTokenExpire(expire) && to.path != "/login") {
+            ElMessage.error("登录已过期，请重新登录！");
+            next("/login");
+        }
+    }
+
     // 未登陆时，没有权限，无需读取路由
     if (to.path != "/login") {
         console.log(from);
@@ -67,20 +83,11 @@ router.beforeEach(async (to, from, next) => {
         await SettingUserDynamicRouter();
     }
 
-    // 未登录时，重定向至登录页
-    if (!userStore().token || userStore().token == "") {
-        if (to.path != "/login") {
-            next("/login");
-        }
-    } else {
-        // Todo 判断登录有效期，并且避免重定向次数过多
-    }
-
     // 动态路由已经添加，但是刷新页面后 404
     // 由于在导航中动态添加的路由，刷新页面是无法读取(刷新页面时没有跳转所以没有触发导航机制)
     // 原因是动态添加的路由需要在下次导航时才生效
     console.log(router.getRoutes());
-    if (to.name == "notfound") {
+    if (to.name == "notfound" || to.name == "NotFound") {
         // 所以要进行手动跳转到动态添加的路由，但前提是跳转的 Path 在路由中已存在才行
         if (router.getRoutes().find(x => x.path == to.path)) {
             // 存在则跳转

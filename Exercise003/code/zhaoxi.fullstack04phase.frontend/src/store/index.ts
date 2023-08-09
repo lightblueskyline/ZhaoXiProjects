@@ -9,7 +9,8 @@ const userStore = defineStore("storeUser", {
             isCollapse: false, // 菜单默认打开
             tags: [] as TagModel[],
             token: "",
-            UserMenus: [] as TreeMenuModel[]
+            UserMenus: [] as TreeMenuModel[],
+            RefreshTokenCount: 0 //限制无感刷新次数
         }
     },
     persist: {

@@ -1,9 +1,11 @@
 // 公共方法
 import TagModel from "../class/TagModel";
 import TreeMenuModel from "../class/TreeMenuModel";
+import UserInfo from "../class/UserInfo";
 import { GetMenus } from "../http/index";
 import router from "../router/index";
 import userStore from "../store/index";
+import jwtDecode from "jwt-decode";
 
 // 选择菜单时添加 Tag
 export const handleSelect = (index: string) => {
@@ -111,4 +113,64 @@ export const RecursiveRoutes = (tree: Array<TreeMenuModel>) => {
         });
     }
     return list;
+}
+
+/**
+ * 格式化 Token
+ * @param token 
+ * @returns 
+ */
+export const FormatToken = (token: string) => {
+    if (token) {
+        return jwtDecode(token) as UserInfo;
+    }
+    return null;
+}
+
+/**
+ * 格式化时间
+ * @param param 
+ * @returns 
+ */
+export const FormatDate = (param: number): string => {
+    // PS: 注意此处需要 * 1000
+    const date = new Date(param * 1000);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1 + "").padStart(2, "0");
+    const day = (date.getDay() + "").padStart(2, "0");
+    const hour = (date.getHours() + "").padStart(2, "0");
+    const minute = (date.getMinutes() + "").padStart(2, "0");
+    const second = (date.getSeconds() + "").padStart(2, "0")
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+}
+
+/**
+ * 获取当前时间
+ * @returns 
+ */
+export const GetDate = (): string => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1 + "").padStart(2, "0");
+    const day = (date.getDay() + "").padStart(2, "0");
+    const hour = (date.getHours() + "").padStart(2, "0");
+    const minute = (date.getMinutes() + "").padStart(2, "0");
+    const second = (date.getSeconds() + "").padStart(2, "0")
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+}
+
+/**
+ * 验证 Token 有效期
+ * @param param 
+ * @returns 
+ */
+export const ValidTokenExpire = (param: number): boolean => {
+    // 验证参数的有效性
+    if (param) {
+        // 若 Token 的有效期大于当前时间
+        if (FormatDate(param) >= GetDate()) {
+            return true;
+        }
+    }
+    return false;
 }
