@@ -65,26 +65,26 @@ builder.Host.ConfigureContainer<ContainerBuilder>(container =>
     container.Register<ISqlSugarClient>(context =>
     {
         #region MySQL
-        //SqlSugarClient dbClient = new SqlSugarClient(new ConnectionConfig()
-        //{
-        //    DbType = DbType.MySql,
-        //    ConnectionString = builder.Configuration.GetConnectionString("ZhaoXiExercise003"),
-        //    IsAutoCloseConnection = true
-        //});
+        SqlSugarClient dbClient = new SqlSugarClient(new ConnectionConfig()
+        {
+            DbType = DbType.MySql,
+            ConnectionString = builder.Configuration.GetConnectionString("ZhaoXiExercise003"),
+            IsAutoCloseConnection = true
+        });
         #endregion
 
         #region SQLite
-        if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "TempDB")))
-        {
-            Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "TempDB"));
-        }
-        string dbPath = Path.Combine(AppContext.BaseDirectory, "TempDB");
-        SqlSugarClient dbClient = new SqlSugarClient(new ConnectionConfig()
-        {
-            DbType = DbType.Sqlite,
-            ConnectionString = @$"DataSource={dbPath}\ZhaoXiExercise003.sqlite",
-            IsAutoCloseConnection = true
-        });
+        //if (!Directory.Exists(Path.Combine(AppContext.BaseDirectory, "TempDB")))
+        //{
+        //    Directory.CreateDirectory(Path.Combine(AppContext.BaseDirectory, "TempDB"));
+        //}
+        //string dbPath = Path.Combine(AppContext.BaseDirectory, "TempDB");
+        //SqlSugarClient dbClient = new SqlSugarClient(new ConnectionConfig()
+        //{
+        //    DbType = DbType.Sqlite,
+        //    ConnectionString = @$"DataSource={dbPath}\ZhaoXiExercise003.sqlite",
+        //    IsAutoCloseConnection = true
+        //});
         #endregion
 
         // Ö§³Ö SQL Óï¾äÊä³ö£¬·½±ãÅÅ³ý´íÎó
