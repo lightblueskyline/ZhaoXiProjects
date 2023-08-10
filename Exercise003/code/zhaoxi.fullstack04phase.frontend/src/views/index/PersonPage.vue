@@ -1,37 +1,3 @@
-<script setup lang="ts">
-import { ref, reactive } from "vue";
-import { ElMessage, UploadProps } from "element-plus";
-
-const form = reactive({
-    name: "",
-    password: "",
-    faceUrl: "/images/01.jpeg",
-    uploadMode: "1"
-});
-//
-const faceUrl = ref(form.faceUrl);
-//
-const formAction = ref("");
-// 上传前的校验
-const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
-    if (!(rawFile.type == "image/png" || rawFile.type == "image/jpeg")) {
-        ElMessage.error("头像必需为图片格式！");
-        return false;
-    } else if ((rawFile.size / 1024 / 1024) > 2) {
-        ElMessage.error("头像图片大小不能超过 2MB ！");
-        return false;
-    }
-    return true;
-};
-// 上传
-const handleAvatarSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {
-    console.log(response.Result);
-    faceUrl.value = URL.createObjectURL(uploadFile.raw!);
-};
-//
-const onSubmit = () => { };
-</script>
-
 <template>
     <el-row>
         <el-col>
@@ -74,6 +40,40 @@ const onSubmit = () => { };
         </el-col>
     </el-row>
 </template>
+
+<script setup lang="ts">
+import { ref, reactive } from "vue";
+import { ElMessage, UploadProps } from "element-plus";
+
+const form = reactive({
+    name: "",
+    password: "",
+    faceUrl: "/images/01.jpeg",
+    uploadMode: "1"
+});
+//
+const faceUrl = ref(form.faceUrl);
+//
+const formAction = ref("");
+// 上传前的校验
+const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
+    if (!(rawFile.type == "image/png" || rawFile.type == "image/jpeg")) {
+        ElMessage.error("头像必需为图片格式！");
+        return false;
+    } else if ((rawFile.size / 1024 / 1024) > 2) {
+        ElMessage.error("头像图片大小不能超过 2MB ！");
+        return false;
+    }
+    return true;
+};
+// 上传
+const handleAvatarSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {
+    console.log(response.Result);
+    faceUrl.value = URL.createObjectURL(uploadFile.raw!);
+};
+//
+const onSubmit = () => { };
+</script>
 
 <style scoped lang="scss">
 .avatar-uploader .avatar {

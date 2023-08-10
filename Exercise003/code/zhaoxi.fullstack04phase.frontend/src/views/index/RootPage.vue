@@ -79,8 +79,9 @@ const isCollapse = computed(() => {
                             <span>个人中心</span>
                         </el-menu-item>
                     </el-sub-menu>
-                    <TreeMenuComp v-for="item in listTreeMenuModel" :objTreeMenuModel="item" :key="item.Index">
-                    </TreeMenuComp>
+                    <!-- <TreeMenuComp v-for="item in listTreeMenuModel" :objTreeMenuModel="item" :key="item.Index">
+                    </TreeMenuComp> -->
+                    <TreeMenuComp :list="listTreeMenuModel"></TreeMenuComp>
                 </el-menu>
             </el-aside>
             <el-container>

@@ -29,17 +29,16 @@ const onSubmit = async (ruleFormRef: FormInstance | undefined) => {
         return;
     }
     await ruleFormRef.validate(async (valid, fields) => {
-        console.log(fields);
         if (valid) {
             // 请求登录接口
             let tempResponse = await GetToken(form) as any;
             if (tempResponse.status === 200) { // 请求成功
                 if (tempResponse.data.IsSuccess) { // 合法用户
                     let tempToken: string = tempResponse.data.Result as string;
-                    console.log(tempToken);
                     // 更新全局状态管理中的 Token
                     userStore().$patch({
-                        token: tempToken
+                        token: tempToken,
+                        RefreshTokenCount: 0 // 登录之后重置刷新次数限制
                     });
                     // 验证通过
                     ElMessage.success("验证通过，登录成功！");

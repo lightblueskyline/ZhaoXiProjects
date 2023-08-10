@@ -17,9 +17,9 @@
                     <el-table-column prop="Order" lable="排序" width="80"></el-table-column>
                     <el-table-column prop="Name" lable="名称" width="180"></el-table-column>
                     <el-table-column prop="Index" label="路径" width="80"></el-table-column>
-                    <el-table-column prop="Icon" label="图标" width="80">
+                    <el-table-column prop="Icon" label="图标">
                         <template #defult="scope">
-                            <IconComp :iconname="scope.row.icon"></IconComp>
+                            <IconComp :iconname="scope.row.Icon"></IconComp>
                         </template>
                     </el-table-column>
                     <el-table-column prop="FilePath" label="组件名称" width="180"></el-table-column>
@@ -29,7 +29,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="Description" label="描述"></el-table-column>
-                    <el-table-column label="Operations" align="center">
+                    <el-table-column label="操作" align="center">
                         <template #default="scope">
                             <el-button size="small" type="info" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                             <el-button size="small" type="danger"
@@ -72,7 +72,9 @@ const Search = async () => {
     await load();
 };
 // 页面加载完成之后，载入数据
-onMounted(load);
+onMounted(async () => {
+    await load();
+});
 // 编辑方法
 const handleEdit = (index: number, row: MenuModel) => {
     console.log(index);
@@ -96,7 +98,7 @@ const closeAddMenu = () => {
 };
 const success = async (message: string) => {
     isShowDialog.value = false;
-    initAddMenu.value = new MenuModel;
+    initAddMenu.value = new MenuModel();
     ElMessage.success(message);
     // 重载路由
     await SettingUserDynamicRouter();

@@ -53,12 +53,10 @@ export const tagClick = (index: string) => {
 export const SettingUserDynamicRouter = async () => {
     // 读取所有节点下的文件
     const nodeFiles = import.meta.glob(["../views/*/*.vue", "../views/*/*/*.vue", "../views/*/*/*.vue"]);
-    console.log(nodeFiles);
     let localFiles: any[] = [];
     for (var item in nodeFiles) {
         localFiles.push({ filepath: item, component: nodeFiles[item] });
     }
-    console.log(localFiles);
     // // 动态路由添加
     // localFiles.forEach(x => {
     //     router.addRoute("RootPage", {

@@ -379,3 +379,7 @@ router.beforeEach(async (to, from, next) => {
 ## Token 无感刷新
 
 当请求出现 401 可能为 Token 过期，拿到 Token 中的 UserID 去重新获得 Token 后再重新请求，限制重试次数。
+
+## Chrome 插件
+
+[Vue.js devtools](https://chrome.google.com/webstore/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd?utm_source=ext_app_menu)
