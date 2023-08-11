@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from "vue";
 import RoleModel from "../../../class/RoleModel";
-import { FormInstance, FormRules } from "element-plus";
+import { ElMessage, FormInstance, FormRules } from "element-plus";
 import { AddRole, EditRole } from "../../../http";
 
 // --- 变量 ---
@@ -67,7 +67,7 @@ const save = async (formEl: FormInstance | undefined) => {
     if (!formEl) {
         return;
     }
-    await formEl.validate((valid, fields) => {
+    await formEl.validate((valid, _fields) => {
         if (valid) {
             if (form.value.Id) {
                 EditRole(form.value).then(function (response) {
@@ -83,7 +83,7 @@ const save = async (formEl: FormInstance | undefined) => {
                 });
             }
         } else {
-            console.log("提交异常！", fields);
+            ElMessage.error("提交表单字段验证异常");
         }
     });
 };

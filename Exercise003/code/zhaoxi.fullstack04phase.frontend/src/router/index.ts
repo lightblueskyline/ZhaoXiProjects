@@ -30,7 +30,7 @@ const router = createRouter({
             children: [
                 {
                     name: "Desktop",
-                    path: "/desktop",
+                    path: "/",
                     component: () => import("../views/index/Desktop.vue"),
                 },
                 {
@@ -60,7 +60,7 @@ const router = createRouter({
 
 // 路由导航(到某页面之前的拦截)
 // 当路由存在则跳转，不存在 404
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
     // 未登录时，重定向至登录页
     if (!userStore().token || userStore().token == "") {
         if (to.path != "/login") {

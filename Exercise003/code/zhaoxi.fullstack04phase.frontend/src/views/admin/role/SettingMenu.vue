@@ -39,18 +39,18 @@ const closeSettingMenu = () => {
 };
 const save = async () => {
     // 获取当前选择的树节点，该函数会返回子节点和父节点
-    console.log(tree.value.getCheckedNodes());
+    // console.log(tree.value.getCheckedNodes());
     // 展开一棵树变为 List 结构
-    console.log(RecursiveRoutes(tree.value.getCheckedNodes()));
+    // console.log(RecursiveRoutes(tree.value.getCheckedNodes()));
     // 通过 ES6 的 Map 方法，序列化数组中的每一项为 JSON 字符串，再通过 Set 集合排重，最后 Map 返回反序列化后的结果
     const uniqueArray = Array.from(new Set(RecursiveRoutes(tree.value.getCheckedNodes())
         .map(item => JSON.stringify(item))))
         .map(str => JSON.parse(str));
     // 通过 Filter 过滤掉父节点，返回被选中的子节点
-    console.log(uniqueArray.filter(x => x.Children == null).map(item => item.Id));
+    // console.log(uniqueArray.filter(x => x.Children == null).map(item => item.Id));
     // 组合参数
     let menuIds = uniqueArray.map(x => x.Id).join(",");
-    console.log(props.roleIds, menuIds);
+    // console.log(props.roleIds, menuIds);
     // Todo: 需要测试一下
     let result = (await SettingMenu(props.roleIds!, menuIds) as any) as boolean;
     if (result) {

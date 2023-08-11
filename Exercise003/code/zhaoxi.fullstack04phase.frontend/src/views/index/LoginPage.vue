@@ -28,7 +28,7 @@ const onSubmit = async (ruleFormRef: FormInstance | undefined) => {
     if (!ruleFormRef) {
         return;
     }
-    await ruleFormRef.validate(async (valid, fields) => {
+    await ruleFormRef.validate(async (valid, _fields) => {
         if (valid) {
             // 请求登录接口
             let tempResponse = await GetToken(form) as any;

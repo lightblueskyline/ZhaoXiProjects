@@ -4,28 +4,28 @@
             <el-card>
                 <el-form :model="form" lable-width="80px">
                     <el-form-item label="用户名">
-                        <el-input v-model="form.name"></el-input>
+                        <el-input v-model="form.NickName"></el-input>
                     </el-form-item>
                     <el-form-item label="密码">
-                        <el-input v-model="form.password" type="password"></el-input>
+                        <el-input v-model="form.Password" type="password"></el-input>
                     </el-form-item>
                     <el-form-item label="头像">
                         <el-upload class="avatar-uploader" :action="formAction" :show-file-list="false"
                             :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-                            <img v-if="faceUrl" :src="faceUrl" alt="用户头像">
+                            <img v-if="faceImage" :src="faceImage" alt="用户头像">
                             <el-icon v-else class="avatar-uploadar-icon">
                                 <Plus />
                             </el-icon>
                         </el-upload>
                     </el-form-item>
                     <el-form-item label="存储方式">
-                        <el-radio-group v-model="form.uploadMode">
+                        <el-radio-group v-model="form.UploadMode" @change="changeUploadMode">
                             <el-radio label="1" size="large">本地存储</el-radio>
                             <el-radio label="2" size="large">七牛云</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" @click="onSubmit">提交</el-button>
+                        <el-button type="primary" @click="onSubmit">保存</el-button>
                         <el-button>取消</el-button>
                     </el-form-item>
                 </el-form>
@@ -44,18 +44,31 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import { ElMessage, UploadProps } from "element-plus";
-
+import router from "../../router/index";
+import userStore from "../../store/index";
+import { FormatToken } from "../../tool/index";
+import { EditNickNameOrPassword } from "../../http";
+// --- 变量 ---
 const form = reactive({
-    name: "",
-    password: "",
-    faceUrl: "/images/01.jpeg",
-    uploadMode: "1"
+    NickName: FormatToken(userStore().token)?.NickName,
+    Password: "",
+    // FaceUrl: "/images/01.jpeg",
+    FaceUrl: FormatToken(userStore().token)?.Image,
+    UploadMode: "1"
 });
-//
-const faceUrl = ref(form.faceUrl);
-//
-const formAction = ref("");
-// 上传前的校验
+const faceImage = ref(form.FaceUrl);
+const formAction = ref("/api/File/UploadFaceImage?uploadMode=" + form.UploadMode);
+// --- 方法 ---
+/**
+ * 变更上传目标
+ */
+const changeUploadMode = () => {
+    formAction.value = "/api/File/UploadFaceImage?uploadMode=" + form.UploadMode;
+};
+/**
+ * 上传前的校验
+ * @param rawFile 
+ */
 const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
     if (!(rawFile.type == "image/png" || rawFile.type == "image/jpeg")) {
         ElMessage.error("头像必需为图片格式！");
@@ -66,13 +79,42 @@ const beforeAvatarUpload: UploadProps["beforeUpload"] = (rawFile) => {
     }
     return true;
 };
-// 上传
+/**
+ * 上传
+ * @param response 
+ * @param uploadFile 
+ */
 const handleAvatarSuccess: UploadProps["onSuccess"] = (response, uploadFile) => {
-    console.log(response.Result);
-    faceUrl.value = URL.createObjectURL(uploadFile.raw!);
+    // 根据不同的上传方式，设置不同的访问路径
+    if (form.UploadMode == "1") {
+        // 本地
+        form.FaceUrl = `http://127.0.0.1:5173/faceimages/${response.Result}`;
+    } else {
+        // 七牛云
+        form.FaceUrl = `http://127.0.0.1:5173/faceimages/${response.Result}`;
+    }
+    faceImage.value = URL.createObjectURL(uploadFile.raw!);
 };
-//
-const onSubmit = () => { };
+/**
+ * 保存
+ */
+const onSubmit = async () => {
+    // 修改用户信息
+    await EditNickNameOrPassword(form);
+    // 退出 带实现...
+    let count = 5;
+    let myTime = setInterval(function () {
+        if (count == 0) {
+            userStore().$reset();
+            router.push({ path: "/login" });
+            // 清除倒计时
+            clearInterval(myTime);
+        } else {
+            ElMessage.warning(`${count} 退出系统...`);
+        }
+        count--;
+    }, 1000);
+};
 </script>
 
 <style scoped lang="scss">

@@ -86,8 +86,7 @@ onMounted(async () => {
  * @param index 
  * @param row 
  */
-const handleEdit = (index: number, row: RoleModel) => {
-    console.log(index);
+const handleEdit = (_index: number, row: RoleModel) => {
     modelAddEdit.value = row;
     isShowAddEdit.value = true;
 };
@@ -96,10 +95,9 @@ const handleEdit = (index: number, row: RoleModel) => {
  * @param index 
  * @param row 
  */
-const handleDelete = async (index: number, row: RoleModel) => {
+const handleDelete = async (_index: number, row: RoleModel) => {
     await DeleteRole(row.Id);
     await load();
-    console.log(index);
 };
 // --- 角色页面 END ---
 

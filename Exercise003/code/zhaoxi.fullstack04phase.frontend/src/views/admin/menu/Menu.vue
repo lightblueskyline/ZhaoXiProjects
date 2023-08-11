@@ -76,14 +76,12 @@ onMounted(async () => {
     await load();
 });
 // 编辑方法
-const handleEdit = (index: number, row: MenuModel) => {
-    console.log(index);
+const handleEdit = (_index: number, row: MenuModel) => {
     initAddMenu.value = row;
     isShowDialog.value = true;
 };
 // 删除方法
-const handleDelete = async (index: number, row: MenuModel) => {
-    console.log(index);
+const handleDelete = async (_index: number, row: MenuModel) => {
     await DeleteMenu(row.Id);
     await load();
 };

@@ -38,7 +38,7 @@
   
 <script setup lang="ts">
 import { ref, computed, reactive, watch } from "vue";
-import { FormInstance, FormRules } from "element-plus";
+import { FormInstance, FormRules, ElMessage } from "element-plus";
 import MenuModel from "../../../class/MenuModel";
 import userStore from "../../../store/index";
 import { AddMenu, EditMenu } from "../../../http/index";
@@ -87,7 +87,7 @@ const save = async (formEl: FormInstance | undefined) => {
     if (!formEl) {
         return;
     }
-    await formEl.validate((valid, fields) => {
+    await formEl.validate((valid, _fields) => {
         if (valid) {
             if (form.value.Id) {
                 EditMenu(form.value).then(function (response) {
@@ -103,7 +103,7 @@ const save = async (formEl: FormInstance | undefined) => {
                 });
             }
         } else {
-            console.log("提交异常", fields);
+            ElMessage.error("提交表单字段验证异常");
         }
     });
 };
