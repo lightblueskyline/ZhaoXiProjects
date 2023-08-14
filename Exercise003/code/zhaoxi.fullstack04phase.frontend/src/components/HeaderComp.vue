@@ -33,7 +33,7 @@
                     <template #dropdown>
                         <el-dropdown-menu>
                             <el-dropdown-item>我的主页</el-dropdown-item>
-                            <el-dropdown-item>退出</el-dropdown-item>
+                            <el-dropdown-item @click="logout">退出</el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
@@ -57,10 +57,10 @@ import IconComp from "./IconComp.vue"; // 导入自定义组件
 import router from "../router/index";
 import { ref, onMounted } from "vue";
 import userStore from "../store/index"; // 导入 pinia 全局状态管理
-import { handleSelect, tagClick } from "../tool/index";
-
-const faceUrl = ref("/images/01.jpeg");
-const nickName = ref("M_0v0_M");
+import { handleSelect, tagClick, FormatToken } from "../tool/index";
+// --- 变量 ---
+const faceUrl = ref(FormatToken(userStore().token)?.Image);
+const nickName = ref(FormatToken(userStore().token)?.NickName);
 // 切换展开折叠菜单
 const SwitchMenuExpand = () => {
     userStore().$patch({
@@ -76,6 +76,8 @@ const handleClose = (index: string) => {
         tags: tags.value
     });
 };
+
+// --- 方法 ---
 // 页面加载完成后从路由匹配当前路径渲染到 Tag
 onMounted(() => {
     // 读取路由
@@ -91,6 +93,13 @@ onMounted(() => {
         tagClick(index);
     }
 });
+/**
+ * 登出
+ */
+const logout = () => {
+    userStore().$reset();
+    router.push({ path: "/login" });
+};
 </script>
 
 <style scoped lang="scss">

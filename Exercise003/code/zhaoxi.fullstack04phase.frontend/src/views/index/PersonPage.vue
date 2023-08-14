@@ -53,10 +53,10 @@ const form = reactive({
     NickName: FormatToken(userStore().token)?.NickName,
     Password: "",
     // FaceUrl: "/images/01.jpeg",
-    FaceUrl: FormatToken(userStore().token)?.Image,
+    Image: FormatToken(userStore().token)?.Image,
     UploadMode: "1"
 });
-const faceImage = ref(form.FaceUrl);
+const faceImage = ref(form.Image);
 const formAction = ref("/api/File/UploadFaceImage?uploadMode=" + form.UploadMode);
 // --- 方法 ---
 /**
@@ -88,10 +88,10 @@ const handleAvatarSuccess: UploadProps["onSuccess"] = (response, uploadFile) => 
     // 根据不同的上传方式，设置不同的访问路径
     if (form.UploadMode == "1") {
         // 本地
-        form.FaceUrl = `http://127.0.0.1:5173/faceimages/${response.Result}`;
+        form.Image = `http://127.0.0.1:5173/faceimages/${response.Result}`;
     } else {
         // 七牛云
-        form.FaceUrl = `http://127.0.0.1:5173/faceimages/${response.Result}`;
+        form.Image = `http://127.0.0.1:5173/faceimages/${response.Result}`;
     }
     faceImage.value = URL.createObjectURL(uploadFile.raw!);
 };
@@ -101,7 +101,7 @@ const handleAvatarSuccess: UploadProps["onSuccess"] = (response, uploadFile) => 
 const onSubmit = async () => {
     // 修改用户信息
     await EditNickNameOrPassword(form);
-    // 退出 带实现...
+    // 退出 待实现...
     let count = 5;
     let myTime = setInterval(function () {
         if (count == 0) {
