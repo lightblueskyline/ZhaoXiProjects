@@ -29,12 +29,12 @@ const router = createRouter({
             // 嵌套其中的页面 -> children
             children: [
                 {
-                    name: "Desktop",
+                    name: "桌面",
                     path: "/",
                     component: () => import("../views/index/Desktop.vue"),
                 },
                 {
-                    name: "Person",
+                    name: "个人中心",
                     path: "/personpage",
                     component: () => import("../views/index/PersonPage.vue"),
                 },

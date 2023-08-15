@@ -125,7 +125,7 @@ const logout = () => {
 .dropdown {
     float: right;
     height: 50px;
-    line-height: 70px;
+    // line-height: 70px;
 }
 
 .el-dropdown {

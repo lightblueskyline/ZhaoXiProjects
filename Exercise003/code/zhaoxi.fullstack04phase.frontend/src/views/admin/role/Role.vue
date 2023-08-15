@@ -37,7 +37,7 @@
                     </el-table-column>
                 </el-table>
                 <el-pagination style="margin-top: 10px;" background layout="prev, pager, next"
-                    :total="1000"></el-pagination>
+                    :total="total"></el-pagination>
             </el-col>
         </el-row>
     </el-card>

@@ -1,102 +1,3 @@
-<script setup lang="ts">
-import { ref } from "vue";
-
-const searchValue = ref("");
-//
-const originList = [
-    {
-        date: '2016-05-03',
-        name: 'Tom',
-        image: "01.jpeg",
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-02',
-        name: 'Tom',
-        image: "01.jpeg",
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-04',
-        name: 'Tom',
-        image: "01.jpeg",
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-03',
-        name: 'Tom',
-        image: "01.jpeg",
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-02',
-        name: 'Tom',
-        image: "01.jpeg",
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-04',
-        name: 'Tom',
-        image: "01.jpeg",
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-03',
-        name: 'Tom',
-        image: "01.jpeg",
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-02',
-        name: 'Tom',
-        image: "01.jpeg",
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-04',
-        name: 'Tom',
-        image: "01.jpeg",
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-03',
-        name: 'Tom',
-        image: "01.jpeg",
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-02',
-        name: 'Tom',
-        image: "01.jpeg",
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-    {
-        date: '2016-05-04',
-        name: 'Tom',
-        image: "01.jpeg",
-        address: 'No. 189, Grove St, Los Angeles',
-    },
-];
-//
-const tableData = ref(originList);
-//
-const Search = () => {
-    if (searchValue.value != "") {
-        tableData.value = originList.filter(x => x.name.indexOf(searchValue.value) > -1);
-    } else {
-        tableData.value = originList
-    }
-};
-//
-const handleEdit = (index: number, row: {}) => {
-    console.log(index, row);
-};
-//
-const handleDelete = (index: number, row: {}) => {
-    console.log(index, row);
-};
-</script>
-
 <template>
     <el-card class="box-card">
         <el-row>
@@ -105,7 +6,7 @@ const handleDelete = (index: number, row: {}) => {
             </el-col>
             <el-col :span="12">
                 <el-button type="primary" @click="Search">查询</el-button>
-                <el-button type="primary">新增</el-button>
+                <el-button type="primary" @click="open">新增</el-button>
             </el-col>
         </el-row>
         <br>
@@ -130,9 +31,64 @@ const handleDelete = (index: number, row: {}) => {
                         </template>
                     </el-table-column>
                 </el-table>
+                <el-pagination style="margin-top: 10px;" background layout="prev, pager, next" :total="total" />
             </el-col>
         </el-row>
+        <AddUser :isShow="IsShow" :info="info" @closeAdd="closeAdd" @success="success"></AddUser>
     </el-card>
 </template>
+
+<script setup lang="ts">
+import { Ref, onMounted, ref } from "vue";
+import UserResponse from "../../../class/UserResponse";
+import AddUser from "./AddUser.vue";
+import { ElMessage } from "element-plus";
+import { GetUsers } from "../../../http";
+// --- 变量 ---
+const searchValue = ref("");
+const tableData = ref<Array<UserResponse>>([]);
+const total = ref(0);
+const IsShow = ref(false);
+const info: Ref<UserResponse> = ref<UserResponse>(new UserResponse());
+const params = ref({
+    Name: "",
+    Description: "",
+    PageIndex: 1,
+    PageSize: 10
+});
+// --- 方法 ---
+const load = async () => {
+    let response = await GetUsers(params.value) as any;
+    tableData.value = response.Data;
+    total.value = response.Total;
+};
+onMounted(async () => {
+    await load()
+});
+const Search = async () => {
+    params.value.Name = searchValue.value;
+    await load();
+};
+const open = () => {
+    IsShow.value = true;
+};
+const closeAdd = () => {
+    IsShow.value = false;
+    info.value = new UserResponse();
+};
+const success = async (message: string) => {
+    IsShow.value = false;
+    info.value = new UserResponse();
+    ElMessage.success(message);
+};
+//
+const handleEdit = (index: number, row: {}) => {
+    console.log(index, row);
+};
+//
+const handleDelete = (index: number, row: {}) => {
+    console.log(index, row);
+};
+</script>
 
 <style scoped lang="scss"></style>

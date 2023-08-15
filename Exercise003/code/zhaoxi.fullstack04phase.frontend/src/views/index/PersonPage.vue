@@ -12,7 +12,7 @@
                     <el-form-item label="头像">
                         <el-upload class="avatar-uploader" :action="formAction" :show-file-list="false"
                             :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-                            <img v-if="faceImage" :src="faceImage" alt="用户头像">
+                            <img v-if="faceImage" :src="faceImage" alt="用户头像" class="avatar">
                             <el-icon v-else class="avatar-uploadar-icon">
                                 <Plus />
                             </el-icon>
@@ -88,10 +88,10 @@ const handleAvatarSuccess: UploadProps["onSuccess"] = (response, uploadFile) => 
     // 根据不同的上传方式，设置不同的访问路径
     if (form.UploadMode == "1") {
         // 本地
-        form.Image = `http://127.0.0.1:5173/faceimages/${response.Result}`;
+        form.Image = `http://localhost:5271/faceimages/${response.Result}`;
     } else {
         // 七牛云
-        form.Image = `http://127.0.0.1:5173/faceimages/${response.Result}`;
+        form.Image = `http://localhost:5271/faceimages/${response.Result}`;
     }
     faceImage.value = URL.createObjectURL(uploadFile.raw!);
 };
