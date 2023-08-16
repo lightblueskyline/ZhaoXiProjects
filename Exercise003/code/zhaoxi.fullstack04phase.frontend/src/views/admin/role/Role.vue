@@ -41,11 +41,11 @@
             </el-col>
         </el-row>
     </el-card>
-    <AddEditRole :isShowAddEdit="isShowAddEdit" :modelAddEdit="modelAddEdit" @closeAddEdit="closeAddEdit"
+    <RoleAddEdit :isShowAddEdit="isShowAddEdit" :modelAddEdit="modelAddEdit" @closeAddEdit="closeAddEdit"
         @successAddEdit="successAddEdit">
-    </AddEditRole>
-    <SettingMenu :isShowSettingMenu="isShowSettingMenu" :roleIds="roleIds" @closeSettingMenu="closeSettingMenu"
-        @successSettingMenu="successSettingMenu"></SettingMenu>
+    </RoleAddEdit>
+    <MenuSetting :isShowSettingMenu="isShowSettingMenu" :roleIds="roleIds" @closeSettingMenu="closeSettingMenu"
+        @successSettingMenu="successSettingMenu"></MenuSetting>
 </template>
 
 <script setup lang="ts">
@@ -53,8 +53,8 @@ import { ref, Ref, onMounted } from "vue";
 import { ElMessage, ElTable } from "element-plus";
 import RoleModel from "../../../class/RoleModel";
 import { GetRoles, DeleteRole } from "../../../http/index";
-import AddEditRole from "./AddEditRole.vue";
-import SettingMenu from "./SettingMenu.vue";
+import RoleAddEdit from "./RoleAddEdit.vue";
+import MenuSetting from "./MenuSetting.vue";
 
 // --- 角色页面 START ---
 // --- 变量 ---

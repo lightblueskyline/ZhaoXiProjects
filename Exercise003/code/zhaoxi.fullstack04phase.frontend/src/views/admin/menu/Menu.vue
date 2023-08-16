@@ -40,7 +40,7 @@
             </el-col>
         </el-row>
     </el-card>
-    <AddMenuVue :isShow="isShowDialog" :info="initAddMenu" @closeAddMenu="closeAddMenu" @success="success"></AddMenuVue>
+    <MenuAdd :isShow="isShowDialog" :info="initAddMenu" @closeAddMenu="closeAddMenu" @success="success"></MenuAdd>
 </template>
 
 <script setup lang="ts">
@@ -50,7 +50,7 @@ import IconComp from "../../../components/IconComp.vue";
 import MenuModel from "../../../class/MenuModel";
 import { GetMenus, DeleteMenu } from "../../../http/index";
 import { SettingUserDynamicRouter } from "../../../tool/index";
-import AddMenuVue from "./AddMenu.vue";
+import MenuAdd from "./MenuAdd.vue";
 // --- 变量 ---
 let params = {
     Name: "",

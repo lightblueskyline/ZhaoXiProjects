@@ -22,8 +22,6 @@
                             <span>个人中心</span>
                         </el-menu-item>
                     </el-sub-menu>
-                    <!-- <TreeMenuComp v-for="item in listTreeMenuModel" :objTreeMenuModel="item" :key="item.Index">
-                    </TreeMenuComp> -->
                     <TreeMenuComp :list="listTreeMenuModel"></TreeMenuComp>
                 </el-menu>
             </el-aside>
@@ -42,58 +40,14 @@
 <script setup lang="ts">
 import TreeMenuComp from "../../components/TreeMenuComp.vue"; // 导入自定义组件
 import HeaderComp from "../../components/HeaderComp.vue"; // 导入自定义组件
-import TreeMenuModel from "../../class/TreeMenuModel"; // 导入模型
-import { computed } from "vue";
 import userStore from "../../store/index"; // 导入 pinia 全局状态管理
 import { handleSelect } from "../../tool/index";
 import router from "../../router/index"; // 导入路由
 import IconComp from "../../components/IconComp.vue";
 
-const listTreeMenuModel: Array<TreeMenuModel> = [
-    {
-        "Name": "菜单管理",
-        "Index": "/menu",
-        "FilePath": "",
-        "Children": [
-            {
-                "Name": "菜单列表",
-                "Index": "/menu",
-                "Children": [],
-                "FilePath": "menu.vue"
-            }
-        ]
-    },
-    {
-        "Name": "角色管理",
-        "Index": "/role",
-        "FilePath": "",
-        "Children": [
-            {
-                "Name": "角色列表",
-                "Index": "/role",
-                "Children": [],
-                "FilePath": "role.vue"
-            }
-        ]
-    },
-    {
-        "Name": "用户管理",
-        "Index": "/user",
-        "FilePath": "",
-        "Children": [
-            {
-                "Name": "用户列表",
-                "Index": "/user",
-                "Children": [],
-                "FilePath": "user.vue"
-            }
-        ]
-    }
-];
-//
-const isCollapse = computed(() => {
-    userStore().isCollapse
-}); // 计算属性
+const _UserStore = userStore();
+const listTreeMenuModel = _UserStore.UserMenus;
+const isCollapse = _UserStore.isCollapse;
 </script>
 
 <style scoped lang="scss"></style>

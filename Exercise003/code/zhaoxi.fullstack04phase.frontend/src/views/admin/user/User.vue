@@ -7,6 +7,7 @@
             <el-col :span="12">
                 <el-button type="primary" @click="Search">查询</el-button>
                 <el-button type="primary" @click="open">新增</el-button>
+                <el-button>设置角色</el-button>
             </el-col>
         </el-row>
         <br>
@@ -41,22 +42,21 @@
 <script setup lang="ts">
 import { Ref, onMounted, ref } from "vue";
 import UserResponse from "../../../class/UserResponse";
-import AddUser from "./AddUser.vue";
+import AddUser from "./UserAdd.vue";
 import { ElMessage } from "element-plus";
 import { GetUsers } from "../../../http";
-// --- 变量 ---
+
+// --- 主画面 START ---
 const searchValue = ref("");
 const tableData = ref<Array<UserResponse>>([]);
 const total = ref(0);
-const IsShow = ref(false);
-const info: Ref<UserResponse> = ref<UserResponse>(new UserResponse());
 const params = ref({
     Name: "",
     Description: "",
     PageIndex: 1,
     PageSize: 10
 });
-// --- 方法 ---
+
 const load = async () => {
     let response = await GetUsers(params.value) as any;
     tableData.value = response.Data;
@@ -69,6 +69,16 @@ const Search = async () => {
     params.value.Name = searchValue.value;
     await load();
 };
+// --- 主画面 END ---
+
+// --- 变量 ---
+
+
+const IsShow = ref(false);
+const info: Ref<UserResponse> = ref<UserResponse>(new UserResponse());
+
+// --- 方法 ---
+
 const open = () => {
     IsShow.value = true;
 };

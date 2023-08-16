@@ -57,14 +57,6 @@ export const SettingUserDynamicRouter = async () => {
     for (var item in nodeFiles) {
         localFiles.push({ filepath: item, component: nodeFiles[item] });
     }
-    // // 动态路由添加
-    // localFiles.forEach(x => {
-    //     router.addRoute("RootPage", {
-    //         name: "",
-    //         path: "",
-    //         component: x.component
-    //     });
-    // });
     const obj = {
         Name: "",
         Index: "",
